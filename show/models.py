@@ -116,9 +116,31 @@ class devicecar(models.Model):
     device_amount = models.PositiveIntegerField(default=1)
 
 class reservationlist(models.Model):
-    list_id = models.IntegerField
-    date = models.DateField
-    time_id = models.IntegerField
-    device_id = models.IntegerField
-    devicecar_id = models.IntegerField
+    #list_id = models.IntegerField
+    #date = models.DateField
+    #time_id = models.IntegerField
+    #device_id = models.IntegerField
+    #devicecar_id = models.IntegerField
+
+    
+    borrow_list = models.ForeignKey(
+        'BorrowList',
+        on_delete=models.CASCADE
+    )
+
+    user = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE
+    )
+
+    device = models.ForeignKey(
+        'Device',
+        on_delete=models.CASCADE
+    )
+
+    date = models.DateField()
+
+    periods = models.CharField(max_length=20)
+
+    amount = models.PositiveIntegerField(default=1)
     

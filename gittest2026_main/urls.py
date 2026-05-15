@@ -20,4 +20,6 @@ from django.urls import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("",include("show.urls")),
+    path('reservations/', views.reservation_table),
 ]
+
