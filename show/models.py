@@ -8,6 +8,7 @@ class user(models.Model):
     email = models.CharField("信箱",max_length= 100)
     ROLE_CHOICES = (
         ('teacher', '老師'),
+        ('administrator','圖書館管理員')
         ('student', '學生'),
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
