@@ -69,7 +69,7 @@ class list(models.Model):
         ('five', '5車'),
     )
     time_id = models.IntegerField
-    
+    classroom = models.CharField(max_length = 10)
     
     
 class time(models.Model):

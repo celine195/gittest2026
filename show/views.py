@@ -1,7 +1,21 @@
 from django.shortcuts import render
-
+from models import *
 from django.shortcuts import render, redirect
-from .forms import ReservationForm
+#from .forms import ReservationForm
+
+class ReservationForm(forms.ModelForm):
+    class Meta:
+        model = list
+        fields = [
+            'user_id',
+            'phone',
+            'usage_type',
+            'time_id',
+            'periods',
+            'classroom',
+            'device_id',
+            'device_amount',
+        ]
 
 def reservation_create(request):
     if request.method == 'POST':
