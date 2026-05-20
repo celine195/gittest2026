@@ -8,7 +8,7 @@ class user(models.Model):
     email = models.CharField("信箱",max_length= 100)
     ROLE_CHOICES = (
         ('teacher', '老師'),
-        ('administrator','圖書館管理員')
+        ('administrator','圖書館管理員'),
         ('student', '學生'),
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
@@ -24,7 +24,7 @@ class list(models.Model):
         ('weekly','每周'),
     )
     usage_type = models.CharField(max_length=10, choices=usage_type_choices, default='once')
-    device_id = models.IntegerField
+    device_id = models.IntegerField()
     device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
     AMOUNT_CHOICES = (
         ('1', '1台'),
@@ -68,7 +68,7 @@ class list(models.Model):
         ('four', '4車'),
         ('five', '5車'),
     )
-    time_id = models.IntegerField
+    time_id = models.IntegerField()
     classroom = models.CharField(max_length = 10)
     
     
