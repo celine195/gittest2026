@@ -1,8 +1,23 @@
-from django.shortcuts import render , redirect
-from django.http import HttpResponse
-from .models import ReservationList
+from django.shortcuts import render
+from models import *  
+from .models import BorrowList
 from django.shortcuts import render, redirect
-from .forms import ReservationForm
+from django.contrib.auth.decorators import login_required
+#from .forms import ReservationForm
+
+class ReservationForm(forms.ModelForm):
+    class Meta:
+        model = list
+        fields = [
+            'user_id',
+            'phone',
+            'usage_type',
+            'time_id',
+            'periods',
+            'classroom',
+            'device_id',
+            'device_amount',
+        ]
 
 def reservation_create(request):
     if request.method == 'POST':
@@ -18,100 +33,14 @@ def reservation_create(request):
     return render(request, 'templates/form.html', {'form': form})
 
 
-
-
-def create_reservation(borrow):
-
-    time_slot = borrow.time_slot
-
-    start_date = time_slot.start_date
-
-    device = borrow.device
-
-    amount = borrow.device_amount
-
-    for period in time_slot.periods:
-
-        # 查詢目前已借數量
-        reservations = ReservationList.objects.filter(
-            date=start_date,
-            periods=period,
-            device=device
-        )
-
-        total_amount = 0
-
-        for item in reservations:
-            total_amount += item.amount
-
-        # 檢查設備是否足夠
-        if total_amount + amount > device.amount:
-
-            return False
-
-        # 建立預約
-        ReservationList.objects.create(
-
-            borrow_list=borrow,
-            user=borrow.user,
-            device=device,
-            date=start_date,
-            periods=period,
-            amount=amount
-        )
-
-    return True
-
-
-def submit_borrow(request):
-
-    if request.method == 'POST':
-
-        user_id = request.POST['user_id']
-
-        device_id = request.POST['device_id']
-
-        time_slot_id = request.POST['time_slot_id']
-
-        device_amount = request.POST['device_amount']
-
-        user = user.objects.get(id=user_id)
-
-        device = device.objects.get(id=device_id)
-
-        time_slot = time_slot.objects.get(id=time_slot_id)
-
-        # 建立借用單
-        borrow = submit_borrow.objects.create(
-
-            user=user,
-
-            device=device,
-
-            time_slot=time_slot,
-
-            device_amount=device_amount
-        )
-
-        # 建立預約
-        success = create_reservation(borrow)
-
-        if success:
-
-            return HttpResponse("預約成功")
-
-        else:
-
-            borrow.delete()
-
-            return HttpResponse("設備不足")
-
-    return render(request, 'borrow.html')
-
-def reservation_table(request):
-
-    reservations = ReservationList.objects.all().order_by('date', 'periods')
-
-    return render(request, 'reservation_list.html', {
-        'reservations': reservations
+def view_borrow_list(request):
+    """
+    頁面：管理員初核頁面
+    功能：查看所有教師送出的借用申請資料
+    """
+    # 根據需求文件，由近到遠撈出所有申請，並預先載入對應的教師(user)資料以利效能優化
+    borrow_records = BorrowList.objects.all().select_related('user').order_by('-id')
+    
+    return render(request, 'borrow_list.html', {
+        'borrow_records': borrow_records
     })
