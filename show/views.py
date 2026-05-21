@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from models import *
+from models import *  
+from .models import BorrowList
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 #from .forms import ReservationForm
 
 class ReservationForm(forms.ModelForm):
@@ -29,3 +31,16 @@ def reservation_create(request):
         form = ReservationForm()
 
     return render(request, 'templates/form.html', {'form': form})
+
+
+def view_borrow_list(request):
+    """
+    頁面：管理員初核頁面
+    功能：查看所有教師送出的借用申請資料
+    """
+    # 根據需求文件，由近到遠撈出所有申請，並預先載入對應的教師(user)資料以利效能優化
+    borrow_records = BorrowList.objects.all().select_related('user').order_by('-id')
+    
+    return render(request, 'borrow_list.html', {
+        'borrow_records': borrow_records
+    })
