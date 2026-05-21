@@ -1,36 +1,35 @@
 from django.shortcuts import render
-from models import *  
-from .models import BorrowList
+from .models import *  
+from .models import list
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-#from .forms import ReservationForm
-
-class ReservationForm(forms.ModelForm):
-    class Meta:
-        model = list
-        fields = [
-            'user_id',
-            'phone',
-            'usage_type',
-            'time_id',
-            'periods',
-            'classroom',
-            'device_id',
-            'device_amount',
-        ]
+from .form import ReservationForm, DeviceForm, TimeForm
 
 def reservation_create(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ReservationForm(request.POST)
-        if form.is_valid():
+        device_form = DeviceForm(request.POST)
+        time_form = TimeForm(request.POST)
+        
+        if form.is_valid() and device_form.is_valid() and time_form.is_valid():
             reservation = form.save(commit=False)
-            reservation.user = request.user  # 自動帶入登入者
-            reservation.save()
-            return redirect('success')
+            reservation.user = request.user 
+            reservation.save()  
+            
+            device_form.save()  
+            time_form.save()
+            return redirect('success')  
     else:
         form = ReservationForm()
+        device_form = DeviceForm()
+        time_form = TimeForm()
 
-    return render(request, 'templates/form.html', {'form': form})
+    return render(request, 'forms.html', {
+        'form': form,
+        'device_form': device_form,
+        'time_form': time_form
+
+    })
 
 
 def view_borrow_list(request):

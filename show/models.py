@@ -39,7 +39,7 @@ class device(models.Model):
 
 class list(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="借用老師")
+    user = models.CharField("借用老師",max_length=20)
     phone = models.CharField("聯絡電話", max_length=25)
     location = models.CharField("教室", max_length=10)
 
@@ -48,8 +48,7 @@ class list(models.Model):
         ('weekly','每周'),
     )
     usage_type = models.CharField(max_length=10, choices=usage_type_choices, default='once')
-    device_id = models.IntegerField
-    device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
+    device_id = models.IntegerField()
     AMOUNT_CHOICES = (
         ('1', '1台'),
         ('2', '2台'),
@@ -92,6 +91,7 @@ class list(models.Model):
         ('four', '4車'),
         ('five', '5車'),
     )
+    device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
     time_id = models.IntegerField
     classroom = models.CharField(max_length = 10)
     
@@ -142,7 +142,7 @@ class ReservationSchedule(models.Model):
 
     booking_form = models.ForeignKey(list, on_delete=models.CASCADE, verbose_name="對應的表單")
     date = models.DateField("借用當天日期")
-    period = models.CharField("節次", max_length=5, choices=list.PERIOD_CHOICES)
+    period = models.CharField("節次", max_length=5, choices=time.PERIODS_CHOICES)
     device_type = models.ForeignKey(device, on_delete=models.CASCADE, verbose_name="載具種類")
     
     # 排程防撞

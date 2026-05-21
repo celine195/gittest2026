@@ -1,7 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
 <h2>借用表單</h2>
 
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    <label>借用老師:</label>{{ form.user }}<br><br>
+
+    <label>連絡電話:</label>{{ form.phone }}<br><br>
+
+    <label>教室:</label>{{ form.location }}<br><br>
+
+    <label>使用類型:</label>{{ form.usage_type }}<br><br>
+
+    <label>載具類型:</label>{{ device_form.device_type }}<br><br>
+
+    <label>借用數量(散借填寫台數，車借填寫車數):</label>{{ form.device_amount }}<br><br>
+
+    <label>借用開始日期：</label>{{ time_form.start_date }}<br><br>
+    <label>借用結束日期：</label>{{ time_form.end_date }}<br><br>
+    <label>借用節次：</label>{{ time_form.period }}<br><br>
+
     <button type="submit">送出</button>
 </form>
