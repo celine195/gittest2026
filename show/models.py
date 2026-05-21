@@ -13,7 +13,7 @@ class user(models.Model):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
 
 
-class list(models.Model):
+class Borrowlist(models.Model):
     user_id = models.IntegerField("借用人")
     phone = models.CharField("連絡電話",max_length= 25)
 
@@ -23,9 +23,8 @@ class list(models.Model):
         ('weekly','每周'),
     )
     usage_type = models.CharField(max_length=10, choices=usage_type_choices, default='once')
-    device_id = models.IntegerField
-    device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
-    AMOUNT_CHOICES = (
+    
+    AMOUNT_CHOICES=(
         ('1', '1台'),
         ('2', '2台'),
         ('3', '3台'),
@@ -66,8 +65,11 @@ class list(models.Model):
         ('three', '3車'),
         ('four', '4車'),
         ('five', '5車'),
-    )
-    time_id = models.IntegerField
+        )
+    
+    device_id = models.IntegerField()
+    device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
+    time_id = models.IntegerField()
     
     
     
@@ -85,7 +87,7 @@ class time(models.Model):
         ('8','第八節'),
         ('4.5','午休'),
     )
-    periods = models.MultiSelectField(
+    periods = models.CharField(
         choices=PERIODS_CHOICES,
         max_length=50, 
         verbose_name="節次")
@@ -96,21 +98,21 @@ class time(models.Model):
         ('Thursday','星期四'),
         ('Friday','星期五'),
     )
-    day = models.MultiSelectField(
+    day = models.CharField(
         choices=DAY_CHOICES,
         max_length=50, 
         verbose_name="星期")
 
 class device(models.Model):
+    
+    device_type_choices = ()
     device_type = models.CharField(max_length=10, choices=device_type_choices, default='')
-    device_type_choices =(
-
-    )
-    #尚未填寫種類
     amount = models.IntegerField(max_length=10)
+    #尚未填寫種類
+    
 
 class devicecar(models.Model):
-    device_id = models.MultiSelectField(
+    device_id = models.CharField(
         max_length=100, 
         )
     device_amount = models.PositiveIntegerField(default=1)

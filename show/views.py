@@ -1,21 +1,19 @@
-from django.shortcuts import render
-from models import *  
-from .models import BorrowList
-from django.shortcuts import render, redirect
+from django.shortcuts import render , redirect
+from .models import *  
+from .models import Borrowlist
 from django.contrib.auth.decorators import login_required
-#from .forms import ReservationForm
+from django import forms
 
 class ReservationForm(forms.ModelForm):
     class Meta:
-        model = list
+        model = Borrowlist
         fields = [
             'user_id',
             'phone',
+            #'usage_type_choices',
             'usage_type',
-            'time_id',
-            'periods',
-            'classroom',
             'device_id',
+            'time_id',
             'device_amount',
         ]
 
@@ -30,7 +28,7 @@ def reservation_create(request):
     else:
         form = ReservationForm()
 
-    return render(request, 'templates/form.html', {'form': form})
+    return render(request, 'forms.html', {'form': form})
 
 
 def view_borrow_list(request):
@@ -39,7 +37,7 @@ def view_borrow_list(request):
     功能：查看所有教師送出的借用申請資料
     """
     # 根據需求文件，由近到遠撈出所有申請，並預先載入對應的教師(user)資料以利效能優化
-    borrow_records = BorrowList.objects.all().select_related('user').order_by('-id')
+    borrow_records = Borrowlist.objects.all().select_related('user').order_by('-id')
     
     return render(request, 'borrow_list.html', {
         'borrow_records': borrow_records
