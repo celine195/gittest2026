@@ -23,5 +23,6 @@ urlpatterns = [
     path("",include("show.urls")),
     path('reservations/', views.reservation_create,name='submit_borrow'),
     path('borrow/', views.view_borrow_list,name='view_borrow_list'),
+    path('borrow/review/<int:pk>/', views.review_borrow, name='review_borrow'),
 ]
 

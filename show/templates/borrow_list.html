@@ -8,12 +8,12 @@
         body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; color: #333; }
         .container { max-width: 1200px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin: 0 auto; }
         .nav { margin-bottom: 20px; }
-        .nav a { margin-right: 15px; text-decoration: none; color: #007bff; font-weight: bold; }
-        h2 { margin-top: 0; color: #212529; border-left: 5px solid #007bff; padding-left: 10px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #59789a; font-weight: bold; }
+        h2 { margin-top: 0; color: #212529; border-left: 5px solid #59789a; padding-left: 10px; }
         p { color: #6c757d; font-size: 14px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
         th, td { border: 1px solid #dee2e6; padding: 12px 10px; text-align: left; }
-        th { background-color: #007bff; color: white; font-weight: 600; }
+        th { background-color: #59789a; color: white; font-weight: 600; }
         tr:nth-child(even) { background-color: #f8f9fa; }
         tr:hover { background-color: #f1f3f5; }
         /* 狀態標籤樣式 */
@@ -23,13 +23,19 @@
         .badge-once { background-color: #e2e3e5; color: #383d41; }
         .badge-weekly { background-color: #cce5ff; color: #004085; }
         .empty-msg { text-align: center; color: #adb5bd; padding: 40px 0; font-size: 16px; }
+        .btn { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 4px; }
+        .btn-approve { background-color: #28a745; color: white; }
+        .btn-approve:hover { background-color: #218838; }
+        .btn-reject { background-color: #dc3545; color: white; }
+        .btn-reject:hover { background-color: #c82333; }
+        .text-muted { color: #999; font-style: italic; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="nav">
-            <a href="{% url 'submit_borrow' %}">📅 查看預約總表 (公用)</a>
+            <a href="{% url 'view_borrow_list' %}">📅 查看預約總表 (公用)</a>
             <a href="">📋 查看初核資料 (管理員)</a>
             <a href="{% url 'submit_borrow' %}">📝 填寫借用表單 (教師)</a>
         </div>
@@ -87,7 +93,12 @@
                     <td>{{ record.quantity }} 台</td>
                     <td>
                         {% if record.status == '待審核' %}
-                            <span class="badge badge-pending">待審核</span>
+                            <form method="POST" action="{% url 'review_borrow' record.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="approve" class="btn btn-approve" onclick="return confirm('確定要核准這筆借用，並自動生成預約排程嗎？')">✔️ 核准</button>
+                                <button type="submit" name="action" value="reject" class="btn btn-reject" onclick="return confirm('確定要拒絕這筆借用申請嗎？')">❌ 拒絕</button>
+                            </form>
+                            
                         {% elif record.status == '已核准' %}
                             <span class="badge badge-approved">已核准</span>
                         {% else %}
