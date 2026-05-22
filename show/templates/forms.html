@@ -1,0 +1,7 @@
+<h2>借用表單</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">送出</button>
+</form>
