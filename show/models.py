@@ -37,7 +37,7 @@ class device(models.Model):
     def __str__(self):
         return f"{self.device_type} - {self.id}"
 
-class list(models.Model):
+class Borrowlist(models.Model):
 
     user = models.CharField("借用老師",max_length=20)
     phone = models.CharField("聯絡電話", max_length=25)
@@ -90,10 +90,12 @@ class list(models.Model):
         ('three', '3車'),
         ('four', '4車'),
         ('five', '5車'),
-    )
+        )
+    
+    device_id = models.IntegerField()
     device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
-    time_id = models.IntegerField
-    classroom = models.CharField(max_length = 10)
+    time_id = models.IntegerField()
+    
     
     
 class time(models.Model):
@@ -140,7 +142,7 @@ class devicecar(models.Model):
 
 class ReservationSchedule(models.Model):
 
-    booking_form = models.ForeignKey(list, on_delete=models.CASCADE, verbose_name="對應的表單")
+    booking_form = models.ForeignKey(Borrowlist, on_delete=models.CASCADE, verbose_name="對應的表單")
     date = models.DateField("借用當天日期")
     period = models.CharField("節次", max_length=5, choices=time.PERIODS_CHOICES)
     device_type = models.ForeignKey(device, on_delete=models.CASCADE, verbose_name="載具種類")

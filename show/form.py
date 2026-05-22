@@ -1,10 +1,10 @@
 from django import forms
-from .models import list, device, time
+from .models import Borrowlist, device, time
 
 
 class ReservationForm(forms.ModelForm):
     class Meta:
-        model = list
+        model = Borrowlist
         fields = "__all__"
 
 class DeviceForm(forms.ModelForm):
