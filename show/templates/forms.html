@@ -1,24 +1,194 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-<h2>借用表單</h2>
+<head>
+    <meta charset="UTF-8">
+    <title>填寫借用表單</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Hiragino Sans GB", "Microsoft JhengHei", sans-serif;
+            background-color: #f4f6f9;
+            color: #333333;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
 
-<form method="post">
-    {% csrf_token %}
-    <label>借用老師:</label>{{ form.user }}<br><br>
+        .form-container {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 650px;
+            padding: 30px;
+            box-sizing: border-box;
+        }
 
-    <label>連絡電話:</label>{{ form.phone }}<br><br>
+        .form-header {
+            border-left: 5px solid #0056b3;
+            padding-left: 12px;
+            margin-bottom: 25px;
+        }
 
-    <label>教室:</label>{{ form.location }}<br><br>
+        .form-header h2 {
+            margin: 0;
+            font-size: 22px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
 
-    <label>使用類型:</label>{{ form.usage_type }}<br><br>
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
 
-    <label>載具類型:</label>{{ device_form.device_type }}<br><br>
+        .full-width {
+            grid-column: span 2;
+        }
 
-    <label>借用數量(散借填寫台數，車借填寫車數):</label>{{ form.device_amount }}<br><br>
 
-    <label>借用開始日期：</label>{{ time_form.start_date }}<br><br>
-    <label>借用結束日期：</label>{{ time_form.end_date }}<br><br>
-    <label>借用節次：</label>{{ time_form.period }}<br><br>
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
 
-    <button type="submit">送出</button>
-</form>
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #333333;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.15);
+        }
+
+        .form-actions {
+            margin-top: 30px;
+            border-top: 1px solid #edf2f7;
+            padding-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-submit {
+            background-color: #0056b3;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #004085;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h2>📝 填寫借用表單 (教師)</h2>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>借用老師：</label>
+                    {{ form.user }}
+                </div>
+
+                <div class="form-group">
+                    <label>連絡電話：</label>
+                    {{ form.phone }}
+                </div>
+
+                <div class="form-group">
+                    <label>教室：</label>
+                    {{ form.location }}
+                </div>
+
+                <div class="form-group">
+                    <label>使用類型：</label>
+                    {{ form.usage_type }}
+                </div>
+
+                <div class="form-group">
+                    <label>載具類型：</label>
+                    {{ device_form.device_type }}
+                </div>
+
+                <div class="form-group">
+                    <label>借用數量 (散借填寫台數，車借填寫車數):</label>
+                    {{ form.device_amount }}
+                </div>
+
+                <div class="form-group">
+                    <label>借用開始日期：</label>
+                    {{ time_form.start_date }}
+                </div>
+
+                <div class="form-group">
+                    <label>借用結束日期：</label>
+                    {{ time_form.end_date }}
+                </div>
+
+                <div class="form-group">
+                    <label>不包含的週次/日期：</label>
+                    {{ time_form.excluded_weeks }}
+                </div>
+
+                <div class="form-group full-width">
+                    <label>借用節次：</label>
+                    {{ time_form.period }}
+                </div>
+
+
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">確認送出表單</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>系統登入 - 學校圖書館公用載具借用管理系統</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .login-container {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 400px;
+            padding: 35px;
+            box-sizing: border-box;
+        }
+        .login-header {
+            border-left: 5px solid #0056b3;
+            padding-left: 12px;
+            margin-bottom: 25px;
+        }
+        .login-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.15);
+        }
+        .btn-login {
+            background-color: #0056b3;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-login:hover {
+            background-color: #004085;
+        }
+        .alert-error {
+            background-color: #fef2f2;
+            border: 1px solid #fca5a5;
+            color: #b91c1c;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-header">
+        <h2>🔒 載具借用系統登入</h2>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert-error">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_username">使用者帳號 (公務信箱)：</label>
+            <input type="text" name="username" id_username required placeholder="請輸入帳號">
+        </div>
+        <div class="form-group">
+            <label for="id_password">密碼：</label>
+            <input type="password" name="password" id_password required placeholder="請輸入密碼">
+        </div>
+        <button type="submit" class="btn-login">立即登入</button>
+    </form>
+</div>
+
+</body>
+</html>
