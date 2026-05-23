@@ -48,7 +48,6 @@ class Borrowlist(models.Model):
         ('weekly','每周'),
     )
     usage_type = models.CharField(max_length=10, choices=usage_type_choices, default='once')
-    
     AMOUNT_CHOICES=(
         ('1', '1'),
         ('2', '2'),
@@ -85,16 +84,15 @@ class Borrowlist(models.Model):
         ('33', '33'),
         ('34', '34'),
         ('35', '35'),
-        ('one', '1'),
-        ('two', '2'),
-        ('three', '3'),
-        ('four', '4'),
-        ('five', '5'),
+        ('one', '1車'),
+        ('two', '2車'),
+        ('three', '3車'),
+        ('four', '4車'),
+        ('five', '5車'),
     )   
-    
     quantity = models.IntegerField(default=1, verbose_name="設備數量")
     device_id = models.CharField(max_length=50, default='1', verbose_name="設備ID")
-    #device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
+    device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
     time_id = models.CharField(max_length=20, default='1', verbose_name="時間ID")
     
     

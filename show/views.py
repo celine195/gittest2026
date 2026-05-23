@@ -1,6 +1,6 @@
 from django.shortcuts import render , redirect , get_object_or_404
 from .models import *  
-from .models import Borrowlist , reservationlist as ReservationList
+from .models import Borrowlist, ReservationSchedule as ReservationList
 from django.contrib import messages
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
@@ -185,3 +185,44 @@ class AllreservationView(ListView):
         context['all_cars'] = all_cars
         context['table_data'] = table_data
         
+def today_reservation_list(request):
+
+    today = timezone.localdate()
+
+    today_records = ReservationSchedule.objects.filter(date=today).order_by('period')
+    
+
+    return render(request, 'today_reservation.html', {
+        'today_records': today_records,
+        'today': today
+    })
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                
+
+                if hasattr(user, 'role') and user.role == 'admin':
+                    return redirect('today_reservation')  
+                else:
+                    return redirect('view_borrow_list')  
+            else:
+                messages.error(request, "帳號或密碼錯誤")
+        else:
+            messages.error(request, "請輸入正確的帳號密碼")
+    else:
+        form = AuthenticationForm()
+    
+    return render(request, 'login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')  
