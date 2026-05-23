@@ -48,53 +48,54 @@ class Borrowlist(models.Model):
         ('weekly','每周'),
     )
     usage_type = models.CharField(max_length=10, choices=usage_type_choices, default='once')
-    device_id = models.IntegerField()
-    AMOUNT_CHOICES = (
-        ('1', '1台'),
-        ('2', '2台'),
-        ('3', '3台'),
-        ('4', '4台'),
-        ('5', '5台'),
-        ('6', '6台'),
-        ('7', '7台'),
-        ('8', '8台'),
-        ('9', '9台'),
-        ('10', '10台'),
-        ('11', '11台'),
-        ('12', '12台'),
-        ('13', '13台'),
-        ('14', '14台'),
-        ('15', '15台'),
-        ('16', '16台'),
-        ('17', '17台'),
-        ('18', '18台'),
-        ('19', '19台'),
-        ('20', '20台'),
-        ('21', '21台'),
-        ('22', '22台'),
-        ('23', '23台'),
-        ('24', '24台'),
-        ('25', '25台'),
-        ('26', '26台'),
-        ('27', '27台'),
-        ('28', '28台'),
-        ('29', '29台'),
-        ('30', '30台'),
-        ('31', '31台'),
-        ('32', '32台'),
-        ('33', '33台'),
-        ('34', '34台'),
-        ('35', '35台'),
-        ('one', '1車'),
-        ('two', '2車'),
-        ('three', '3車'),
-        ('four', '4車'),
-        ('five', '5車'),
-        )
     
-    device_id = models.IntegerField()
-    device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
-    time_id = models.IntegerField()
+    AMOUNT_CHOICES=(
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+        ('5', '5'),
+        ('6', '6'),
+        ('7', '7'),
+        ('8', '8'),
+        ('9', '9'),
+        ('10', '10'),
+        ('11', '11'),
+        ('12', '12'),
+        ('13', '13'),
+        ('14', '14'),
+        ('15', '15'),
+        ('16', '16'),
+        ('17', '17'),
+        ('18', '18'),
+        ('19', '19'),
+        ('20', '20'),
+        ('21', '21'),
+        ('22', '22'),
+        ('23', '23'),
+        ('24', '24'),
+        ('25', '25'),
+        ('26', '26'),
+        ('27', '27'),
+        ('28', '28'),
+        ('29', '29'),
+        ('30', '30'),
+        ('31', '31'),
+        ('32', '32'),
+        ('33', '33'),
+        ('34', '34'),
+        ('35', '35'),
+        ('one', '1'),
+        ('two', '2'),
+        ('three', '3'),
+        ('four', '4'),
+        ('five', '5'),
+    )   
+    
+    quantity = models.IntegerField(default=1, verbose_name="設備數量")
+    device_id = models.CharField(max_length=50, default='1', verbose_name="設備ID")
+    #device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
+    time_id = models.CharField(max_length=20, default='1', verbose_name="時間ID")
     
     
     
