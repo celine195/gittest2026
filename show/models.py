@@ -102,16 +102,16 @@ class Borrowlist(models.Model):
 class time(models.Model):
     start_date = models.DateField("開始日期",null=True, blank=True)
     end_date = models.DateField("結束日期",null=True, blank=True)
-    PERIODS_CHOICES =(
-        ('1','第一節'),
-        ('2','第二節'),
-        ('3','第三節'),
-        ('4','第四節'),
-        ('5','第五節'),
-        ('6','第六節'),
-        ('7','第七節'),
-        ('8','第八節'),
-        ('4.5','午休'),
+    PERIODS_CHOICES = (
+        ('1', '第一節'),
+        ('2', '第二節'),
+        ('3', '第三節'),
+        ('4', '第四節'),
+        ('5', '第五節'),
+        ('6', '第六節'),
+        ('7', '第七節'),
+        ('8', '第八節'),
+        ('4.5', '午休'),
     )
     period = models.CharField("借用節次", max_length=5, choices=PERIODS_CHOICES)
 
