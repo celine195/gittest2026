@@ -53,7 +53,7 @@ def today_reservation_list(request):
 
     today = timezone.localdate()
 
-    today_records = reservationlist.objects.filter(date=today).order_by('period')
+    today_records = reservationlist.objects.filter(date=today).order_by('time_id')
     
 
     return render(request, 'today_reservation.html', {
@@ -91,7 +91,7 @@ def logout_view(request):
     return redirect('login')  
 
 class AllreservationView(ListView):
-    model = list
+    model = Borrowlist
     template_name = 'all_reservation.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -117,13 +117,13 @@ class AllreservationView(ListView):
         for sch in day_schedules:
             try:
                 
-                original_form = list.objects.get(id=sch.list_id)
+                original_form = Borrowlist.objects.get(id=sch.list_id)
                 teacher = CustomRegistrationForm.objects.get(id=original_form.user_id)
                 table_data[str(sch.time_id)][sch.devicecar_id] = {
                     'form': original_form,
                     'teacher': teacher
                 }
-            except (list.DoesNotExist, CustomRegistrationForm.DoesNotExist):
+            except (Borrowlist.DoesNotExist, CustomRegistrationForm.DoesNotExist):
                 continue
 
         context['target_date'] = target_date

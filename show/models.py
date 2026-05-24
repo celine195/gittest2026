@@ -149,16 +149,3 @@ class reservationlist(models.Model):
     time_id = models.IntegerField()
     device_id = models.IntegerField()
     devicecar_id = models.IntegerField()
-    
-    # 排程防撞
-    assigned_car = models.ForeignKey(devicecar, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="指派車次", help_text="若為散借則此處留空")
-    is_scattered = models.BooleanField("是否為散借", default=False)
-    borrowed_amount = models.PositiveIntegerField("實際借出載具數量")
-
-    class Meta:
-        verbose_name = "預約總表"
-        unique_together = ('date', 'period', 'assigned_car')
-
-    def __str__(self):
-        car_info = self.assigned_car.car_code if self.assigned_car else "散裝"
-        return f"{self.date} 第{self.period}節 - {self.device_type} [{car_info}] -> {self.booking_form.location}"
