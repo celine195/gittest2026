@@ -36,9 +36,9 @@ class device(models.Model):
     def __str__(self):
         return f"{self.device_type} - {self.id}"
 
-class list(models.Model):
+class Borrowlist(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="借用老師")
+    user = models.CharField("借用老師",max_length=20)
     phone = models.CharField("聯絡電話", max_length=25)
     location = models.CharField("教室", max_length=10)
 
