@@ -1,14 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render , redirect , get_object_or_404
 from .models import *  
+from django.contrib import messages
+from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import messages
 from django.utils import timezone
 from .form import ReservationForm, DeviceForm, TimeForm
 from datetime import date, datetime
 from django.views.generic import ListView
-
 
 def reservation_create(request):
     if request.method == "POST":
