@@ -118,7 +118,7 @@ class AllreservationView(ListView):
             try:
                 
                 original_form = Borrowlist.objects.get(id=sch.list_id)
-                teacher = CustomRegistrationForm.objects.get(id=original_form.user_id)
+                teacher = CustomRegistrationForm.objects.get(id=original_form.user.id)
                 table_data[str(sch.time_id)][sch.devicecar_id] = {
                     'form': original_form,
                     'teacher': teacher
