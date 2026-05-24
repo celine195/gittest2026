@@ -1,11 +1,9 @@
 from django.db import models
-from datetime import timedelta
+from django.contrib.auth.models import User
+from django import forms
 
-# Create your models here.
 
-class user(models.Model):
-    name = models.CharField("姓名",max_length= 10)
-    email = models.CharField("信箱",max_length= 100)
+class CustomRegistrationForm(forms.ModelForm):
     ROLE_CHOICES = (
         ('teacher', '老師'),
         ('administrator','圖書館管理員'),
@@ -13,12 +11,37 @@ class user(models.Model):
     )
     role = models.CharField(max_length=30, choices=ROLE_CHOICES, default='student')
 
+    class Meta:
+        model = User
+        fields = ['username', 'email'] 
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+        self.role = cleaned_data.get("role")
+        if password != confirm_password:
+            raise forms.ValidationError("兩次輸入的密碼不一致！")
+        return cleaned_data
+
+class device(models.Model):
+    DEVICE_CHOICES =(
+        ('ipad', 'iPad'),
+        ('chromebook', 'Chromebook'),
+        ('surface_go', 'Surface Go'),
+        ('acer_laptop', 'Acer 小筆電'),
+    )
+    device_type = models.CharField("載具種類", max_length=20, choices=DEVICE_CHOICES, unique=True)
+
+    def __str__(self):
+        return f"{self.device_type} - {self.id}"
 
 class list(models.Model):
-    user_id = models.IntegerField("借用人")
-    phone = models.CharField("連絡電話",max_length= 25)
 
-    #這
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="借用老師")
+    phone = models.CharField("聯絡電話", max_length=25)
+    location = models.CharField("教室", max_length=10)
+
     usage_type_choices = (
         ('once','單次'),
         ('weekly','每周'),
@@ -127,3 +150,15 @@ class reservationlist(models.Model):
     device_id = models.IntegerField()
     devicecar_id = models.IntegerField()
     
+    # 排程防撞
+    assigned_car = models.ForeignKey(devicecar, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="指派車次", help_text="若為散借則此處留空")
+    is_scattered = models.BooleanField("是否為散借", default=False)
+    borrowed_amount = models.PositiveIntegerField("實際借出載具數量")
+
+    class Meta:
+        verbose_name = "預約總表"
+        unique_together = ('date', 'period', 'assigned_car')
+
+    def __str__(self):
+        car_info = self.assigned_car.car_code if self.assigned_car else "散裝"
+        return f"{self.date} 第{self.period}節 - {self.device_type} [{car_info}] -> {self.booking_form.location}"
