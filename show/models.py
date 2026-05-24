@@ -5,12 +5,11 @@ from django import forms
 
 class CustomRegistrationForm(forms.ModelForm):
     ROLE_CHOICES = (
-        ('teacher', '一般老師'),
-        ('admin', '圖書館管理員'),
+        ('teacher', '老師'),
+        ('administrator','圖書館管理員'),
+        ('student', '學生'),
     )
-    role = forms.ChoiceField(choices=ROLE_CHOICES, label="申請身分", widget=forms.RadioSelect)
-    password = forms.CharField(label="密碼", widget=forms.PasswordInput)
-    confirm_password = forms.CharField(label="確認密碼", widget=forms.PasswordInput)
+    role = models.CharField(max_length=30, choices=ROLE_CHOICES, default='student')
 
     class Meta:
         model = User
@@ -90,62 +89,66 @@ class Borrowlist(models.Model):
         ('three', '3車'),
         ('four', '4車'),
         ('five', '5車'),
-        )
-    
-    device_id = models.IntegerField()
+    )
     device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
     time_id = models.IntegerField()
-    
+    classroom = models.CharField(max_length = 10)
     
     
 class time(models.Model):
     start_date = models.DateField("開始日期",null=True, blank=True)
     end_date = models.DateField("結束日期",null=True, blank=True)
-    PERIODS_CHOICES =(
-        ('1','第一節'),
-        ('2','第二節'),
-        ('3','第三節'),
-        ('4','第四節'),
-        ('5','第五節'),
-        ('6','第六節'),
-        ('7','第七節'),
-        ('8','第八節'),
-        ('4.5','午休'),
+    PERIODS_CHOICES = (
+        ('1', '第一節'),
+        ('2', '第二節'),
+        ('3', '第三節'),
+        ('4', '第四節'),
+        ('5', '第五節'),
+        ('6', '第六節'),
+        ('7', '第七節'),
+        ('8', '第八節'),
+        ('4.5', '午休'),
     )
-    period = models.CharField("借用節次", max_length=5, choices=PERIODS_CHOICES)
-
-    start_date = models.DateField("開始日期")
-    end_date = models.DateField("結束日期", help_text="若是單次借用，結束日期請設定與開始日期相同")
-    excluded_weeks = models.CharField("不包含的週次/日期", max_length=200, blank=True, null=True, help_text="例如：第9週期中考、2026-05-20")
-
-    BORROW_TYPE_CHOICES = (
-        ('unit', '散借 (20台以內)'),
-        ('car', '借用整台載具車'),
+    periods = models.CharField(
+        max_length=50, 
+        choices=PERIODS_CHOICES, 
+        verbose_name="節次",
+        default='1'
     )
+    DAY_CHOICES = (
+        ('Monday','星期一'),
+        ('Tuesday','星期二'),
+        ('Wednesday','星期三'),
+        ('Thursday','星期四'),
+        ('Friday','星期五'),
+    )
+    day = models.CharField(
+        choices=DAY_CHOICES,
+        max_length=50, 
+        verbose_name="星期")
 
-    device_type = models.ForeignKey(device, on_delete=models.CASCADE, verbose_name="要借什麼載具")
-    borrow_type = models.CharField("借用形式", max_length=10, choices=BORROW_TYPE_CHOICES, default='unit')
-    quantity = models.PositiveIntegerField("借用數量", help_text="散借填寫台數，車借填寫車數")
-
-    pickup_by = models.CharField("誰來拿", max_length=50, default="學生（帶學生證）")
-    created_at = models.DateTimeField("填單時間", auto_now_add=True)
-    def __str__(self):
-        return f"{self.user.username} - {self.device_type} ({self.start_date})"
+class device(models.Model):
+    device_type_choices =(
+        ('iPad', 'iPad'),
+        ('Chromebook', 'Chromebook'), 
+        ('SurfaceGo', 'Surface Go'), 
+        ('Acer', 'Acer小筆電'),
+    )
+    device_type = models.CharField(max_length=10, choices=device_type_choices, default='iPad')
+    amount = models.IntegerField()
 
 class devicecar(models.Model):
-    device_type = models.ForeignKey(device, on_delete=models.CASCADE, verbose_name="所屬載具種類")
-    car_code = models.CharField("車次代號", max_length=10, help_text="例如: B車")
-    capacity = models.PositiveIntegerField("車內載具總台數", default=42)
+    device_id = models.CharField(
+        max_length=100, 
+        )
+    device_amount = models.PositiveIntegerField(default=1)
 
-    def __str__(self):
-        return f"{self.device_type} - {self.car_code} ({self.capacity}台)"
-
-class ReservationSchedule(models.Model):
-
-    booking_form = models.ForeignKey(Borrowlist, on_delete=models.CASCADE, verbose_name="對應的表單")
-    date = models.DateField("借用當天日期")
-    period = models.CharField("節次", max_length=5, choices=time.PERIODS_CHOICES)
-    device_type = models.ForeignKey(device, on_delete=models.CASCADE, verbose_name="載具種類")
+class reservationlist(models.Model):
+    list_id = models.IntegerField()
+    date = models.DateField()
+    time_id = models.IntegerField()
+    device_id = models.IntegerField()
+    devicecar_id = models.IntegerField()
     
     # 排程防撞
     assigned_car = models.ForeignKey(devicecar, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="指派車次", help_text="若為散借則此處留空")
