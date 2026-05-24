@@ -8,10 +8,10 @@ class user(models.Model):
     email = models.CharField("信箱",max_length= 100)
     ROLE_CHOICES = (
         ('teacher', '老師'),
-        ('administrator','圖書館管理員')
+        ('administrator','圖書館管理員'),
         ('student', '學生'),
     )
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
+    role = models.CharField(max_length=30, choices=ROLE_CHOICES, default='student')
 
 
 class list(models.Model):
@@ -24,8 +24,7 @@ class list(models.Model):
         ('weekly','每周'),
     )
     usage_type = models.CharField(max_length=10, choices=usage_type_choices, default='once')
-    device_id = models.IntegerField
-    device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
+    device_id = models.IntegerField()
     AMOUNT_CHOICES = (
         ('1', '1台'),
         ('2', '2台'),
@@ -68,28 +67,31 @@ class list(models.Model):
         ('four', '4車'),
         ('five', '5車'),
     )
-    time_id = models.IntegerField
+    device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
+    time_id = models.IntegerField()
     classroom = models.CharField(max_length = 10)
     
     
 class time(models.Model):
     start_date = models.DateField("開始日期",null=True, blank=True)
     end_date = models.DateField("結束日期",null=True, blank=True)
-    PERIODS_CHOICES =(
-        ('1','第一節'),
-        ('2','第二節'),
-        ('3','第三節'),
-        ('4','第四節'),
-        ('5','第五節'),
-        ('6','第六節'),
-        ('7','第七節'),
-        ('8','第八節'),
-        ('4.5','午休'),
+    PERIODS_CHOICES = (
+        ('1', '第一節'),
+        ('2', '第二節'),
+        ('3', '第三節'),
+        ('4', '第四節'),
+        ('5', '第五節'),
+        ('6', '第六節'),
+        ('7', '第七節'),
+        ('8', '第八節'),
+        ('4.5', '午休'),
     )
-    periods = models.MultiSelectField(
-        choices=PERIODS_CHOICES,
+    periods = models.CharField(
         max_length=50, 
-        verbose_name="節次")
+        choices=PERIODS_CHOICES, 
+        verbose_name="節次",
+        default='1'
+    )
     DAY_CHOICES = (
         ('Monday','星期一'),
         ('Tuesday','星期二'),
@@ -97,29 +99,31 @@ class time(models.Model):
         ('Thursday','星期四'),
         ('Friday','星期五'),
     )
-    day = models.MultiSelectField(
+    day = models.CharField(
         choices=DAY_CHOICES,
         max_length=50, 
         verbose_name="星期")
 
 class device(models.Model):
-    device_type = models.CharField(max_length=10, choices=device_type_choices, default='')
     device_type_choices =(
-
+        ('iPad', 'iPad'),
+        ('Chromebook', 'Chromebook'), 
+        ('SurfaceGo', 'Surface Go'), 
+        ('Acer', 'Acer小筆電'),
     )
-    #尚未填寫種類
-    amount = models.IntegerField(max_length=10)
+    device_type = models.CharField(max_length=10, choices=device_type_choices, default='iPad')
+    amount = models.IntegerField()
 
 class devicecar(models.Model):
-    device_id = models.MultiSelectField(
+    device_id = models.CharField(
         max_length=100, 
         )
     device_amount = models.PositiveIntegerField(default=1)
 
 class reservationlist(models.Model):
-    list_id = models.IntegerField
-    date = models.DateField
-    time_id = models.IntegerField
-    device_id = models.IntegerField
-    devicecar_id = models.IntegerField
+    list_id = models.IntegerField()
+    date = models.DateField()
+    time_id = models.IntegerField()
+    device_id = models.IntegerField()
+    devicecar_id = models.IntegerField()
     
