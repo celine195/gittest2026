@@ -149,3 +149,5 @@ class reservationlist(models.Model):
     time_id = models.IntegerField()
     device_id = models.IntegerField()
     devicecar_id = models.IntegerField()
+    class Meta: 
+        db_table = 'show_reservationlist'
