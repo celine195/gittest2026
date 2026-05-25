@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>今日預約總覽 </title>
+    <style>
+        /* 全局基礎設定 */
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            background-color: #f4f6f9;
+            color: #333333;
+            margin: 0;
+            padding: 0; /* 移除原本的 padding，讓全螢幕滿版 */
+        }
+
+        /* 頂部通用導覽列專用樣式 */
+        .top-nav {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background-color: #ffffff; 
+            padding: 15px 40px; 
+            border-bottom: 1px solid #e2e8f0; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 主內容包裹區：強迫上下排列且置中 */
+        .main-content {
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        /* 主內容外框卡片 */
+        .container {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 1100px;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        /* 頂部導覽/標題區 */
+        .header {
+            border-left: 5px solid #0056b3;
+            padding-left: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 22px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        /* 日期標籤提示 */
+        .date-badge {
+            background-color: #e0eefe;
+            color: #0056b3;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* 說明文字 */
+        .description {
+            color: #666666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        /* 經典管理員藍色表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #0056b3;
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 12px 15px;
+            border: 1px solid #004085;
+        }
+
+        td {
+            padding: 12px 15px;
+            font-size: 14px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+            font-size: 15px;
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .period-badge {
+            background-color: #475569;
+            color: #ffffff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div>
+            <a href="{% url 'view_borrow_list' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">🗂️ 查看預約總表 </a>
+            <a href="{% url 'view_borrow_list' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">📋 查看初核資料 </a>
+            <a href="{% url 'submit_borrow' %}" style="text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">📝 填寫借用表單</a>
+            <a href="{% url 'today_reservation' %}" style="margin-right: 25px; text-decoration: none; color: #0056b3; font-weight: 600; display: inline-block;">📅 查看今日預約</a>
+        </div>
+
+        <div style="font-size: 14px;">
+            {% if user.is_authenticated %}
+                <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
+                <a href="{% url 'logout' %}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">安全登出</a>
+            {% else %}
+                <a href="{% url 'login' %}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <h2>📅 今日預約與載具調度總表</h2>
+                <span class="date-badge">今天是：{{ today|date:"Y 年 m 月 d 日" }}</span>
+            </div>
+            
+            <p class="description">本功能自動篩選今日所有教師借用排程，以便圖書館管理員進行載具車準備與發放作業。</p>
+
+            {% if today_records %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>預約節次</th>
+                            <th>借用教師</th>
+                            <th>聯絡電話</th>
+                            <th>使用教室</th>
+                            <th>載具種類</th>
+                            <th>分配載具車</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in today_records %}
+                            <tr>
+                                <td><span class="period-badge">{{ record.period }}</span></td>
+                                <td><strong>{{ record.reservation.user.name }}</strong></td>
+                                <td>{{ record.reservation.phone }}</td>
+                                <td>{{ record.reservation.classroom }}</td>
+                                <td>{{ record.cart.device_type }}</td>
+                                <td>
+                                    {% if record.cart %}
+                                        🚗 {{ record.cart.id }} 號車 (容量: {{ record.cart.capacity }})
+                                    {% else %}
+                                        <span style="color: #dc2626;">⚠️ 尚未分配載具車</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-msg">
+                    Status: 📪 目前今日尚無任何教師提交或核准的載具借用排程。
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,133 +1,135 @@
-from django.shortcuts import render
-from models import *
-from django.shortcuts import render , redirect
-from django.http import HttpResponse
-from .models import ReservationList
-from django.shortcuts import render, redirect
-#from .forms import ReservationForm
-
-class ReservationForm(forms.ModelForm):
-    class Meta:
-        model = list
-        fields = [
-            'user_id',
-            'phone',
-            'usage_type',
-            'time_id',
-            'periods',
-            'classroom',
-            'device_id',
-            'device_amount',
-        ]
+from django.shortcuts import render , redirect , get_object_or_404
+from .models import *  
+from django.contrib import messages
+from django.db import transaction
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.utils import timezone
+from .form import ReservationForm, DeviceForm, TimeForm
+from datetime import date, datetime
+from django.views.generic import ListView
 
 def reservation_create(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ReservationForm(request.POST)
-        if form.is_valid():
+        device_form = DeviceForm(request.POST)
+        time_form = TimeForm(request.POST)
+        
+        if form.is_valid() and device_form.is_valid() and time_form.is_valid():
             reservation = form.save(commit=False)
-            reservation.user = request.user  # 自動帶入登入者
-            reservation.save()
-            return redirect('success')
+            reservation.user = request.user 
+            reservation.save()  
+            
+            device_form.save()  
+            time_form.save()
+            return redirect('success')  
     else:
         form = ReservationForm()
+        device_form = DeviceForm()
+        time_form = TimeForm()
 
-    return render(request, 'templates/form.html', {'form': form})
+    return render(request, 'forms.html', {
+        'form': form,
+        'device_form': device_form,
+        'time_form': time_form
 
-
-
-
-def create_reservation(borrow):
-
-    time_slot = borrow.time_slot
-
-    start_date = time_slot.start_date
-
-    device = borrow.device
-
-    amount = borrow.device_amount
-
-    for period in time_slot.periods:
-
-        # 查詢目前已借數量
-        reservations = ReservationList.objects.filter(
-            date=start_date,
-            periods=period,
-            device=device
-        )
-
-        total_amount = 0
-
-        for item in reservations:
-            total_amount += item.amount
-
-        # 檢查設備是否足夠
-        if total_amount + amount > device.amount:
-
-            return False
-
-        # 建立預約
-        ReservationList.objects.create(
-
-            borrow_list=borrow,
-            user=borrow.user,
-            device=device,
-            date=start_date,
-            periods=period,
-            amount=amount
-        )
-
-    return True
-
-
-def submit_borrow(request):
-
-    if request.method == 'POST':
-
-        user_id = request.POST['user_id']
-
-        device_id = request.POST['device_id']
-
-        time_slot_id = request.POST['time_slot_id']
-
-        device_amount = request.POST['device_amount']
-
-        user = user.objects.get(id=user_id)
-
-        device = device.objects.get(id=device_id)
-
-        time_slot = time_slot.objects.get(id=time_slot_id)
-
-        # 建立借用單
-        borrow = submit_borrow.objects.create(
-
-            user=user,
-
-            device=device,
-
-            time_slot=time_slot,
-
-            device_amount=device_amount
-        )
-
-        # 建立預約
-        success = create_reservation(borrow)
-
-        if success:
-
-            return HttpResponse("預約成功")
-
-        else:
-
-            borrow.delete()
-
-            return HttpResponse("設備不足")
-
-    return render(request, 'borrow.html')
-
-def reservation_table(request):
-
-    reservations = ReservationList.objects.all().order_by('date', 'periods')
-
-    return render(request, 'reservation_list.html', {
-        'reservations': reservations
     })
+
+
+def view_borrow_list(request):
+    """
+    頁面：管理員初核頁面
+    功能：查看所有教師送出的借用申請資料
+    """
+    borrow_records = Borrowlist.objects.all().order_by('-id')
+    
+    return render(request, 'borrow_list.html', {
+        'borrow_records': borrow_records
+    })
+
+
+def today_reservation_list(request):
+
+    today = timezone.localdate()
+
+    today_records = reservationlist.objects.filter(date=today).order_by('time_id')
+    
+
+    return render(request, 'today_reservation.html', {
+        'today_records': today_records,
+        'today': today
+    })
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                
+
+                if hasattr(user, 'role') and user.role == 'admin':
+                    return redirect('today_reservation')  
+                else:
+                    return redirect('view_borrow_list')  
+            else:
+                messages.error(request, "帳號或密碼錯誤")
+        else:
+            messages.error(request, "請輸入正確的帳號密碼")
+    else:
+        form = AuthenticationForm()
+    
+    return render(request, 'login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')  
+
+class AllreservationView(ListView):
+    model = Borrowlist
+    template_name = 'all_reservation.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        date_str = self.request.GET.get('date')
+        if date_str:
+            try:
+                target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            except ValueError:
+                target_date = date.today()
+        else:
+            target_date = date.today()
+
+        periods = ['1', '2', '3', '4', '4.5', '5', '6', '7', '8']
+        
+        period_names = {
+            '1': '第一節', '2': '第二節', '3': '第三節', '4': '第四節',
+            '4.5': '午休', '5': '第五節', '6': '第六節', '7': '第七節', '8': '第八節'
+        }
+        all_cars = devicecar.objects.all()
+        day_schedules = reservationlist.objects.filter(date=target_date)
+        table_data = {p: {} for p in periods}
+        
+        for sch in day_schedules:
+            try:
+                
+                original_form = Borrowlist.objects.get(id=sch.list_id)
+                teacher = CustomRegistrationForm.objects.get(id=original_form.user.id)
+                table_data[str(sch.time_id)][sch.devicecar_id] = {
+                    'form': original_form,
+                    'teacher': teacher
+                }
+            except (Borrowlist.DoesNotExist, CustomRegistrationForm.DoesNotExist):
+                continue
+
+        context['target_date'] = target_date
+        context['periods'] = periods
+        context['period_names'] = period_names
+        context['all_cars'] = all_cars
+        context['table_data'] = table_data
+        
+        return context
