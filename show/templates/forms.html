@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>填寫借用表單</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            background-color: #f4f6f9;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-nav {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background-color: #ffffff; 
+            padding: 15px 40px; 
+            border-bottom: 1px solid #e2e8f0; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+
+        .container {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 700px; 
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 24px;
+            color: #1a1a1a;
+            border-left: 5px solid #0056b3;
+            padding-left: 12px;
+            font-weight: 600;
+        }
+
+
+        form label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-size: 15px;
+        }
+
+   
+        form input[type="text"], 
+        form input[type="date"], 
+        form select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: #fff;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        form input:focus, form select:focus {
+            outline: none;
+            border-color: #0056b3;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+
+        .btn-submit {
+            background-color: #0056b3; 
+            color: #ffffff; 
+            border: none;
+            padding: 12px 24px; 
+            border-radius: 6px; 
+            font-size: 16px;
+            font-weight: 600; 
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #004085;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div>
+            <a href="{% url 'allreservation_view' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">🗂️ 查看預約總表 </a>
+            <a href="{% url 'view_borrow_list' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">📋 查看初核資料 </a>
+            <a href="{% url 'submit_borrow' %}" style="text-decoration: none; color: #0056b3; font-weight: 600; display: inline-block;">📝 填寫借用表單</a>
+            <a href="{% url 'today_reservation' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">📅 查看今日預約</a>
+        </div>
+            <div style="font-size: 14px;">
+            {% if user.is_authenticated %}
+                <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
+                <a href="{% url 'logout' %}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
+            {% else %}
+                <a href="{% url 'login' %}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h2>📝 填寫借用表單</h2>
+           
+            <form method="post">
+                {% csrf_token %}
+               
+                <div style="margin-bottom: 20px;">
+                    <label>借用老師：</label>
+                    {{ form.user }}
+                </div>
+
+
+                <div style="margin-bottom: 20px;">
+                    <label>連絡電話：</label>
+                    {{ form.phone }}
+                </div>
+
+
+                <div style="margin-bottom: 20px;">
+                    <label>教室：</label>
+                    {{ form.location }}
+                </div>
+
+
+                <div style="margin-bottom: 20px;">
+                    <label>使用類型：</label>
+                    {{ form.usage_type }}
+                </div>
+
+
+                <div style="margin-bottom: 20px;">
+                    <label>載具類型：</label>
+                    {{ device_form.device_type }}
+                </div>
+
+
+                <div style="margin-bottom: 20px;">
+                    <label>借用數量(散借填寫台數，車借填寫車數):</label>
+                    {{ form.device_amount }}
+                </div>
+
+
+                <div style="margin-bottom: 20px;">
+                    <label>借用開始日期：</label>
+                    {{ time_form.start_date }}
+                </div>
+
+
+                <div style="margin-bottom: 20px;">
+                    <label>借用結束日期：</label>
+                    {{ time_form.end_date }}
+                </div>
+
+
+                <div style="margin-bottom: 20px;">
+                    <label>不包含的週次/日期：</label>
+                    <input type="text" placeholder="若無請留空">
+                </div>
+
+
+                <div style="margin-bottom: 25px;">
+                    <label>借用節次：</label>
+                    {{ time_form.period }}
+                </div>
+
+
+                <button type="submit" class="btn-submit">送出申請表單</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
