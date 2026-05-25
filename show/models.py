@@ -49,50 +49,9 @@ class Borrowlist(models.Model):
     usage_type = models.CharField(max_length=10, choices=usage_type_choices, default='once')
     device_id = models.IntegerField()
     
-    AMOUNT_CHOICES = (
-        ('1', '1台'),
-        ('2', '2台'),
-        ('3', '3台'),
-        ('4', '4台'),
-        ('5', '5台'),
-        ('6', '6台'),
-        ('7', '7台'),
-        ('8', '8台'),
-        ('9', '9台'),
-        ('10', '10台'),
-        ('11', '11台'),
-        ('12', '12台'),
-        ('13', '13台'),
-        ('14', '14台'),
-        ('15', '15台'),
-        ('16', '16台'),
-        ('17', '17台'),
-        ('18', '18台'),
-        ('19', '19台'),
-        ('20', '20台'),
-        ('21', '21台'),
-        ('22', '22台'),
-        ('23', '23台'),
-        ('24', '24台'),
-        ('25', '25台'),
-        ('26', '26台'),
-        ('27', '27台'),
-        ('28', '28台'),
-        ('29', '29台'),
-        ('30', '30台'),
-        ('31', '31台'),
-        ('32', '32台'),
-        ('33', '33台'),
-        ('34', '34台'),
-        ('35', '35台'),
-        ('one', '1車'),
-        ('two', '2車'),
-        ('three', '3車'),
-        ('four', '4車'),
-        ('five', '5車'),
-    )
     
-    device_amount = models.PositiveIntegerField(choices=AMOUNT_CHOICES, default=1)
+    
+    device_amount = models.PositiveIntegerField(default=1)
     time_id = models.IntegerField()
     classroom = models.CharField(max_length = 10)
     
