@@ -10,18 +10,17 @@ from .form import ReservationForm, DeviceForm, TimeForm
 from datetime import date, datetime
 from django.views.generic import ListView
 
-
 def reservation_create(request):
     if request.method == "POST":
         form = ReservationForm(request.POST)
         device_form = DeviceForm(request.POST)
         time_form = TimeForm(request.POST)
-       
+        
         if form.is_valid() and device_form.is_valid() and time_form.is_valid():
             reservation = form.save(commit=False)
-            reservation.user = request.user
+            reservation.user = request.user 
             reservation.save()  
-           
+            
             device_form.save()  
             time_form.save()
             return redirect('success')  
@@ -30,14 +29,13 @@ def reservation_create(request):
         device_form = DeviceForm()
         time_form = TimeForm()
 
-
     return render(request, 'forms.html', {
         'form': form,
         'device_form': device_form,
         'time_form': time_form
 
-
     })
+
 
 def view_borrow_list(request):
     """

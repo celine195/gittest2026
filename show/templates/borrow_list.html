@@ -35,6 +35,126 @@
 
     <div class="container">
         <div class="nav">
+            <a href="{% url 'view_borrow_list' %}">🗂️ 查看預約總表 </a>
+            <a href="">📋 查看初核資料</a>
+            <a href="{% url 'submit_borrow' %}">📝 填寫借用表單</a>
+            <a href="{% url 'today_reservation' %}">📅 查看今日預約</a>
+        </div>
+        <hr>
+
+        <h2>📋 管理員初核系統 — 借用申請資料總表</h2>
+        <p>本功能供管理員審查教師送出的載具申請表單，確認無誤後可進行核准與載具車分配。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>申請ID</th>
+                    <th>教師姓名</th>
+                    <th>聯絡電話</th>
+                    <th>使用類型</th>
+                    <th>使用期間/日期</th>
+                    <th>預約節次</th>
+                    <th>排除週次</th>
+                    <th>使用教室</th>
+                    <th>載具種類</th>
+                    <th>申請數量</th>
+                    <th>審核狀態</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in borrow_records %}
+                <tr>
+                    <td><strong>#{{ record.id }}</strong></td>
+                    <td>{{ record.user.name }}</td>
+                    <td>{{ record.phone }}</td>
+                    <td>
+                        {% if record.usage_type == 'once' %}
+                            <span class="badge badge-once">單次</span>
+                        {% else %}
+                            <span class="badge badge-weekly">每週</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if record.usage_type == 'once' %}
+                            {{ record.start_date|date:"Y-m-d" }}
+                        {% else %}
+                            {{ record.start_date|date:"m-d" }} ~ {{ record.end_date|date:"m-d" }}
+                        {% endif %}
+                    </td>
+                    <td>第 {{ record.periods }} 節</td>
+                    <td>
+                        {% if record.exclude_weeks %}
+                            第 {{ record.exclude_weeks }} 週
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>{{ record.classroom }}</td>
+                    <td>{{ record.device_type }}</td>
+                    <td>{{ record.quantity }} 台</td>
+                    <td>
+                        {% if record.status == '待審核' %}
+                            <form method="POST" action="{% url 'review_borrow' record.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="approve" class="btn btn-approve" onclick="return confirm('確定要核准這筆借用，並自動生成預約排程嗎？')">✔️ 核准</button>
+                                <button type="submit" name="action" value="reject" class="btn btn-reject" onclick="return confirm('確定要拒絕這筆借用申請嗎？')">❌ 拒絕</button>
+                            </form>
+                            
+                        {% elif record.status == '已核准' %}
+                            <span class="badge badge-approved">已核准</span>
+                        {% else %}
+                            <span class="badge badge-pending">{{ record.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="11" class="empty-msg">📭 目前尚無任何教師提交借用申請資料。</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員後台 - 查看初核資料</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; color: #333; }
+        .container { max-width: 1200px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin: 0 auto; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #59789a; font-weight: bold; }
+        h2 { margin-top: 0; color: #212529; border-left: 5px solid #59789a; padding-left: 10px; }
+        p { color: #6c757d; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        th, td { border: 1px solid #dee2e6; padding: 12px 10px; text-align: left; }
+        th { background-color: #59789a; color: white; font-weight: 600; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #f1f3f5; }
+        /* 狀態標籤樣式 */
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .badge-pending { background-color: #fff3cd; color: #856404; } /* 待審核 */
+        .badge-approved { background-color: #d4edda; color: #155724; } /* 已核准 */
+        .badge-once { background-color: #e2e3e5; color: #383d41; }
+        .badge-weekly { background-color: #cce5ff; color: #004085; }
+        .empty-msg { text-align: center; color: #adb5bd; padding: 40px 0; font-size: 16px; }
+        .btn { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 4px; }
+        .btn-approve { background-color: #28a745; color: white; }
+        .btn-approve:hover { background-color: #218838; }
+        .btn-reject { background-color: #dc3545; color: white; }
+        .btn-reject:hover { background-color: #c82333; }
+        .text-muted { color: #999; font-style: italic; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="nav">
             <a href="{% url 'allreservation_view' %}">🗂️ 查看預約總表 </a>
             <a href="{% url 'view_borrow_list' %}">📋 查看初核資料</a>
             <a href="{% url 'submit_borrow' %}">📝 填寫借用表單</a>
