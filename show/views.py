@@ -17,13 +17,15 @@ def reservation_create(request):
         time_form = TimeForm(request.POST)
         
         if form.is_valid() and device_form.is_valid() and time_form.is_valid():
-            reservation = form.save(commit=False)
-            reservation.user = request.user 
-            reservation.save()  
-            
-            device_form.save()  
-            time_form.save()
-            return redirect('success')  
+            with transaction.atomic():
+                t_obj = time_form.save()
+                d_obj, created = device.objects.get_or_create(device_type=device_form.cleaned_data['device_type'])
+    
+                reservation = form.save(commit=False)
+                reservation.user = request.user 
+                reservation.time = t_obj  # 綁定時間外鍵
+                reservation.device = d_obj  # 綁定載具外鍵
+                reservation.save()
     else:
         form = ReservationForm()
         device_form = DeviceForm()
@@ -42,8 +44,27 @@ def view_borrow_list(request):
     頁面：管理員初核頁面
     功能：查看所有教師送出的借用申請資料
     """
+    if request.method == "POST":
+        record_id = request.POST.get('record_id')
+        action = request.POST.get('action')
+        
+        # 抓出這筆申請資料
+        record = get_object_or_404(Borrowlist, id=record_id)
+        
+        if action == 'approve':
+            record.status = '已核准'
+            record.save()
+            messages.success(request, f"已成功核准 #{record.id} 的借用申請！")
+        elif action == 'reject':
+            record.status = '已拒絕'
+            record.save()
+            messages.warning(request, f"已拒絕 #{record.id} 的借用申請。")
+            
+        # 處理完後，重新導向回自己，刷新頁面狀態
+        return redirect('view_borrow_list')
+
+    # 平常管理員直接進網頁時（GET 請求），只負責顯示名單
     borrow_records = Borrowlist.objects.all().order_by('-id')
-    
     return render(request, 'borrow_list.html', {
         'borrow_records': borrow_records
     })

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User 
 from django import forms
 
 
@@ -46,13 +46,38 @@ class Borrowlist(models.Model):
         ('once','單次'),
         ('weekly','每周'),
     )
-    usage_type = models.CharField(max_length=10, choices=usage_type_choices, default='once')
+
+
+    start_date = models.DateField("開始日期", null=True, blank=True)
+    end_date = models.DateField("結束日期", null=True, blank=True)
+    
+    DAY_CHOICES = (
+        ('Monday','星期一'), ('Tuesday','星期二'), ('Wednesday','星期三'),
+        ('Thursday','星期四'), ('Friday','星期五'),
+    )
+    day = models.CharField("星期", choices=DAY_CHOICES, max_length=50, blank=True, null=True)
+
+    PERIODS_CHOICES = (
+        ('1', '第一節'), ('2', '第二節'), ('3', '第三節'), ('4', '第四節'),
+        ('4.5', '午休'), ('5', '第五節'), ('6', '第六節'), ('7', '第七節'), ('8', '第八節'),
+    )
+    periods = models.CharField("預約節次", max_length=50, choices=PERIODS_CHOICES, default='1')
+
+    STATUS_CHOICES = (
+        ('待審核', '待審核'),
+        ('已通過', '已通過'),
+        ('已拒絕', '已拒絕'),
+    )
+    usage_type = models.CharField(max_length=10, choices = usage_type_choices , default='once')
     device_id = models.IntegerField()
     
-    
+    user = models.CharField("借用老師", max_length=20)
+    device_id = models.ForeignKey('device', on_delete=models.CASCADE, verbose_name="載具")
+    time_id = models.ForeignKey('time', on_delete=models.CASCADE, verbose_name="時間排程")
+    status = models.CharField("審核狀態", max_length=10, choices = STATUS_CHOICES , default='待審核')
     
     device_amount = models.PositiveIntegerField(default=1)
-    time_id = models.IntegerField()
+    
     classroom = models.CharField(max_length = 10)
     
     
@@ -88,15 +113,7 @@ class time(models.Model):
         max_length=50, 
         verbose_name="星期")
 
-class device(models.Model):
-    device_type_choices =(
-        ('iPad', 'iPad'),
-        ('Chromebook', 'Chromebook'), 
-        ('SurfaceGo', 'Surface Go'), 
-        ('Acer', 'Acer小筆電'),
-    )
-    device_type = models.CharField(max_length=10, choices=device_type_choices, default='iPad')
-    amount = models.IntegerField()
+
 
 class devicecar(models.Model):
     device_id = models.CharField(
