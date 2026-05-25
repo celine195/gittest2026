@@ -9,6 +9,7 @@ from django.utils import timezone
 from .form import ReservationForm, DeviceForm, TimeForm
 from datetime import date, datetime
 from django.views.generic import ListView
+from django.http import HttpResponseRedirect
 
 def reservation_create(request):
     if request.method == "POST":
@@ -61,7 +62,7 @@ def view_borrow_list(request):
             messages.warning(request, f"已拒絕 #{record.id} 的借用申請。")
             
         # 處理完後，重新導向回自己，刷新頁面狀態
-        return redirect('view_borrow_list')
+        return HttpResponseRedirect('/borrow/')
 
     # 平常管理員直接進網頁時（GET 請求），只負責顯示名單
     borrow_records = Borrowlist.objects.all().order_by('-id')
