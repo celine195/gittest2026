@@ -18,7 +18,17 @@
 
 <div class="container-fluid">
     <div class="table-container">
-        <h2 class="mb-4 text-center text-dark fw-bold">📅 圖書館公用載具預約總看盤</h2>
+        <a href="{% url 'allreservation_view' %}">🗂️ 查看預約總表 </a>
+        <a href="{% url 'view_borrow_list' %}">📋 查看初核資料</a>
+        <a href="{% url 'submit_borrow' %}">📝 填寫借用表單</a>
+        <a href="{% url 'today_reservation' %}">📅 查看今日預約</a>
+        {% if user.is_authenticated %}
+                <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
+                <a href="{% url 'logout' %}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
+            {% else %}
+                <a href="{% url 'login' %}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
+            {% endif %}
+        <h2 class="mb-4 text-center text-dark fw-bold">🗂️ 圖書館公用載具預約總看盤</h2>
         
         <form method="GET" class="row g-3 justify-content-center mb-4">
             <div class="col-auto d-flex align-items-center">

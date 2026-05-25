@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <title>今日預約總覽 </title>
     <style>
-        /* 全局基礎設定 */
+
         body {
             font-family: "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
             background-color: #f4f6f9;
             color: #333333;
             margin: 0;
-            padding: 0; /* 移除原本的 padding，讓全螢幕滿版 */
+            padding: 0; 
         }
 
-        /* 頂部通用導覽列專用樣式 */
+   
         .top-nav {
             display: flex; 
             justify-content: space-between; 
@@ -26,7 +26,7 @@
             box-sizing: border-box;
         }
 
-        /* 主內容包裹區：強迫上下排列且置中 */
+      
         .main-content {
             display: flex;
             justify-content: center;
@@ -34,7 +34,7 @@
             box-sizing: border-box;
         }
 
-        /* 主內容外框卡片 */
+       
         .container {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
@@ -46,7 +46,7 @@
             box-sizing: border-box;
         }
 
-        /* 頂部導覽/標題區 */
+      
         .header {
             border-left: 5px solid #0056b3;
             padding-left: 12px;
@@ -63,7 +63,7 @@
             font-weight: 600;
         }
 
-        /* 日期標籤提示 */
+      
         .date-badge {
             background-color: #e0eefe;
             color: #0056b3;
@@ -73,14 +73,14 @@
             font-weight: 600;
         }
 
-        /* 說明文字 */
+   
         .description {
             color: #666666;
             font-size: 14px;
             margin-bottom: 25px;
         }
 
-        /* 經典管理員藍色表格 */
+       
         table {
             width: 100%;
             border-collapse: collapse;
@@ -136,7 +136,7 @@
 
     <div class="top-nav">
         <div>
-            <a href="{% url 'view_borrow_list' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">🗂️ 查看預約總表 </a>
+            <a href="{% url 'allreservation_view' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">🗂️ 查看預約總表 </a>
             <a href="{% url 'view_borrow_list' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">📋 查看初核資料 </a>
             <a href="{% url 'submit_borrow' %}" style="text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">📝 填寫借用表單</a>
             <a href="{% url 'today_reservation' %}" style="margin-right: 25px; text-decoration: none; color: #0056b3; font-weight: 600; display: inline-block;">📅 查看今日預約</a>
@@ -145,7 +145,7 @@
         <div style="font-size: 14px;">
             {% if user.is_authenticated %}
                 <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
-                <a href="{% url 'logout' %}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">安全登出</a>
+                <a href="{% url 'logout' %}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
             {% else %}
                 <a href="{% url 'login' %}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
             {% endif %}

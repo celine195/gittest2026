@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
 from django.contrib import admin
 # 引入你 show/models.py 裡面定義的兩個資料模型
 from .models import Borrowlist , device, time, devicecar
