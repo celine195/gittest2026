@@ -182,7 +182,7 @@
                                 <td>{{ record.user }}</td>
                                 <td>{{ record.phone }}</td>
                                 <td>{{ record.location }}</td>
-                                <td>{{ record.device.get_device_type_display }}</td>
+                                <td>{{ record.device_id.get_device_type_display }}</td>
                                 <td>
                                     {% if record.cart %}
                                         🚗 {{ record.cart.id }} 號車 (容量: {{ record.cart.capacity }})
