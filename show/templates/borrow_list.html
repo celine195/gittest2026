@@ -110,7 +110,7 @@
 
                     <td>
                         {% if record.status == '待審核' %}
-                            <form method="POST" action="{% url 'view_borrow_list' %}" style="display:inline;">
+                            <form method="POST" action="{% url 'view_borrow_list' %}"style="display:inline;">
                                 {% csrf_token %}
                                 <input type="hidden" name="record_id" value="{{ record.id }}">
                                 <button type="submit" name="action" value="approve" class="btn btn-sm btn-approved" onclick="return confirm('確定要核准這筆借用嗎？')">✔️ 核准</button>

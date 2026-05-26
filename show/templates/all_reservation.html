@@ -29,43 +29,68 @@
                 <a href="{% url 'login' %}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
             {% endif %}
         <h2 class="mb-4 text-center text-dark fw-bold">🗂️ 圖書館公用載具預約總看盤</h2>
-        
-        <form method="GET" class="row g-3 justify-content-center mb-4">
-            <div class="col-auto d-flex align-items-center">
-                <label for="date" class="form-label me-2 mb-0 fw-bold">查看日期：</label>
-                <input type="date" class="form-control" id="date" name="date" value="{{ target_date|date:'Y-m-d' }}">
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-dark">切換日期</button>
-            </div>
-        </form>
 
         <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle">
+            <table>
                 <thead>
                     <tr>
-                        <th class="period-col">載具 \ 節次</th>
-                        <th>第一節</th><th>第二節</th><th>第三節</th><th>第四節</th>
-                        <th>午休</th><th>第五節</th><th>第六節</th><th>第七節</th><th>第八節</th>
+                        <th>教師姓名</th>
+                        <th>聯絡電話</th>
+                        <th>使用類型</th>
+                        <th>使用期間/日期</th>
+                        <th>預約節次</th>
+                        <th>排除週次</th>
+                        <th>使用教室</th>
+                        <th>載具種類</th>
+                        <th>申請數量</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for car in all_cars %}
-                    <tr>
-                        <td class="period-col text-start">
-                            🚗 推車 (ID: {{ car.id }})
-                        </td>
-                        
-                        {% for p in periods %}
+                    {% for record in borrow_records %}
+                        <tr>
+
+                        <td>{{ record.user }}</td>
+
+                        <td>{{ record.phone }}</td>
+
                         <td>
-                            <span class="slot-available">✔</span>
+                            {% if record.usage_type == 'once' %}
+                                <span class="badge bg-primary">單次</span>
+                            {% else %}
+                                <span class="badge bg-success">每週</span>
+                            {% endif %}
                         </td>
-                        {% endfor %}
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="10" class="text-center text-muted">目前資料庫無任何載具車資料，請先至後台建立。</td>
-                    </tr>
+
+                        
+
+
+                        <td>
+                            {{record.start_date}}~{{record.end_date}}
+
+                        </td>
+
+                        
+                        <td>
+                            {{ record.get_periods_display }}
+                        </td>
+
+
+                        <td>
+                            {% if record.time %}
+                                {{ record.time.get_day_display }} {{ record.time.get_periods_display }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        
+
+                        <td>{{ record.location }}</td>
+
+                        <td>{{ record.device_id.get_device_type_display }}</td>
+
+                        <td>{{ record.device_amount }} 台</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>

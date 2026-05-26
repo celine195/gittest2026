@@ -81,7 +81,7 @@ def today_reservation_list(request):
 
     today = timezone.localdate()
 
-    today_records = reservationlist.objects.filter(date=today).order_by('time_id')
+    today_records = Borrowlist.objects.filter(start_date=today).order_by('time_id')
     
 
     return render(request, 'today_reservation.html', {
@@ -118,46 +118,9 @@ def logout_view(request):
     logout(request)
     return redirect('login')  
 
-class AllreservationView(ListView):
-    model = Borrowlist
-    template_name = 'all_reservation.html'
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        date_str = self.request.GET.get('date')
-        if date_str:
-            try:
-                target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            except ValueError:
-                target_date = date.today()
-        else:
-            target_date = date.today()
 
-        periods = ['1', '2', '3', '4', '4.5', '5', '6', '7', '8']
-        
-        period_names = {
-            '1': '第一節', '2': '第二節', '3': '第三節', '4': '第四節',
-            '4.5': '午休', '5': '第五節', '6': '第六節', '7': '第七節', '8': '第八節'
-        }
-        all_cars = devicecar.objects.all()
-        day_schedules = reservationlist.objects.filter(date=target_date)
-        table_data = {p: {} for p in periods}
-        
-        for sch in day_schedules:
-            try:
-                
-                original_form = Borrowlist.objects.get(id=sch.list_id)
-                teacher = CustomRegistrationForm.objects.get(id=original_form.user.id)
-                table_data[str(sch.time_id)][sch.devicecar_id] = {
-                    'form': original_form,
-                    'teacher': teacher
-                }
-            except (Borrowlist.DoesNotExist, CustomRegistrationForm.DoesNotExist):
-                continue
-
-        context['target_date'] = target_date
-        context['periods'] = periods
-        context['period_names'] = period_names
-        context['all_cars'] = all_cars
-        context['table_data'] = table_data
-        
-        return context
+def all_reservation_list(request):
+    borrow_records = Borrowlist.objects.all().order_by('-id')
+    return render(request, 'all_reservation.html', {
+        'borrow_records': borrow_records
+    })

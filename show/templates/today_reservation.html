@@ -176,11 +176,13 @@
                     <tbody>
                         {% for record in today_records %}
                             <tr>
-                                <td><span class="period-badge">{{ record.period }}</span></td>
-                                <td><strong>{{ record.reservation.user.name }}</strong></td>
-                                <td>{{ record.reservation.phone }}</td>
-                                <td>{{ record.reservation.classroom }}</td>
-                                <td>{{ record.cart.device_type }}</td>
+                                <td>
+                                    {{ record.get_periods_display }}
+                                </td>
+                                <td>{{ record.user }}</td>
+                                <td>{{ record.phone }}</td>
+                                <td>{{ record.location }}</td>
+                                <td>{{ record.device_id.get_device_type_display }}</td>
                                 <td>
                                     {% if record.cart %}
                                         🚗 {{ record.cart.id }} 號車 (容量: {{ record.cart.capacity }})
