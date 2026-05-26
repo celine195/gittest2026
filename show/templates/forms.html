@@ -129,7 +129,7 @@
                
                 <div style="margin-bottom: 20px;">
                     <label>借用老師：</label>
-                    {{ form.user }}
+                    <input type="text" name="user" class="form-control" placeholder="請輸入老師姓名" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                 </div>
 
 
@@ -185,7 +185,6 @@
                     <label>借用節次：</label>
                     {{ time_form.periods }}
                 </div>
-
 
                 <button type="submit" class="btn-submit">送出申請表單</button>
             </form>

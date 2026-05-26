@@ -6,42 +6,45 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils import timezone
-from .form import ReservationForm, DeviceForm, TimeForm
+from .form import ReservationForm
 from datetime import date, datetime
 from django.views.generic import ListView
 from django.http import HttpResponseRedirect
 
 def reservation_create(request):
+    # 💡 確保不論是 POST 還是 GET，一進來都先把 form 建立好，徹底解決 UnboundLocalError！
+    form = ReservationForm()
+    
     if request.method == "POST":
         form = ReservationForm(request.POST)
-        device_form = DeviceForm(request.POST)
-        time_form = TimeForm(request.POST)
-        print(form.is_valid())
         
-        print(device_form.is_valid())
-        print(time_form.is_valid())
-        if form.is_valid() and device_form.is_valid() and time_form.is_valid():
-            with transaction.atomic():
-                t_obj = time_form.save()
-                d_obj, created = device.objects.get_or_create(device_type=device_form.cleaned_data['device_type'])
-    
-                reservation = form.save(commit=False)
-                reservation.user = request.user 
-                reservation.time = t_obj  # 綁定時間外鍵
-                reservation.device = d_obj  # 綁定載具外鍵
-                reservation.save()
-    else:
-        form = ReservationForm()
-        device_form = DeviceForm()
-        time_form = TimeForm()
+        if form.is_valid():
+            try:
+                with transaction.atomic():
+                    # 1. 建立預約物件，但先不要寫入資料庫 (commit=False)
+                    reservation = form.save(commit=False)
+                    
+                    # 💡 2. 核心修正：直接去拿網頁上打的老師名字文字，塞進 user 欄位
+                    # ❌ 絕對不要寫成 reservation.user = request.user 喔！
+                    reservation.user = request.POST.get('user')
+                    
+                    # 3. 正式存檔（這樣 Django 就會自動把日期、裝置、名字全部一起存進去！）
+                    reservation.save()
+                    return redirect('/reservations/')
+            except Exception as e:
+                print("❌ 存檔時發生資料庫錯誤：", e)
+        else:
+            print("❌ 表單驗證失敗！詳細原因：", form.errors)
+            
+    # 💡 這裡統一交給同一個 Form 元件去渲染畫面
+    device_form = form
+    time_form = form
 
     return render(request, 'forms.html', {
         'form': form,
         'device_form': device_form,
-        'time_form': time_form
-
+        'time_form': time_form,
     })
-
 
 def view_borrow_list(request):
     """

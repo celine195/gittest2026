@@ -24,21 +24,9 @@ class CustomRegistrationForm(forms.ModelForm):
             raise forms.ValidationError("兩次輸入的密碼不一致！")
         return cleaned_data
 
-class device(models.Model):
-    DEVICE_CHOICES =(
-        ('ipad', 'iPad'),
-        ('chromebook', 'Chromebook'),
-        ('surface_go', 'Surface Go'),
-        ('acer_laptop', 'Acer 小筆電'),
-    )
-    device_type = models.CharField("載具種類", max_length=20, choices=DEVICE_CHOICES, unique=True)
-
-    def __str__(self):
-        return f"{self.device_type} - {self.id}"
-
 class Borrowlist(models.Model):
 
-    user = models.CharField("借用老師",max_length=20)
+    user = models.CharField("借用老師", max_length=20, null=True, blank=True)
     phone = models.CharField("聯絡電話", max_length=25)
     location = models.CharField("教室", max_length=10)
 
@@ -46,7 +34,18 @@ class Borrowlist(models.Model):
         ('once','單次'),
         ('weekly','每周'),
     )
+    usage_type = models.CharField(max_length=10, choices = usage_type_choices , default='once')
+    
+    DEVICE_CHOICES =(
+        ('ipad', 'iPad'),
+        ('chromebook', 'Chromebook'),
+        ('surface_go', 'Surface Go'),
+        ('acer_laptop', 'Acer 小筆電'),
+    )
+    device_type = models.CharField("載具種類", max_length=20, choices=DEVICE_CHOICES)
 
+    def __str__(self):
+        return f"{self.device_type} - {self.id}"
 
     start_date = models.DateField("開始日期", null=True, blank=True)
     end_date = models.DateField("結束日期", null=True, blank=True)
@@ -62,57 +61,17 @@ class Borrowlist(models.Model):
         ('4.5', '午休'), ('5', '第五節'), ('6', '第六節'), ('7', '第七節'), ('8', '第八節'),
     )
     periods = models.CharField("預約節次", max_length=50, choices=PERIODS_CHOICES, default='1')
-
+    
     STATUS_CHOICES = (
         ('待審核', '待審核'),
         ('已通過', '已通過'),
         ('已拒絕', '已拒絕'),
     )
-    usage_type = models.CharField(max_length=10, choices = usage_type_choices , default='once')
-    device_id = models.IntegerField()
-    
-    user = models.CharField("借用老師", max_length=20)
-    device_id = models.ForeignKey('device', on_delete=models.CASCADE, verbose_name="載具")
-    time_id = models.ForeignKey('time', on_delete=models.CASCADE, verbose_name="時間排程")
+    device_id = models.CharField("載具編號",max_length = 10,default="")
+    time_id = models.CharField("時間",max_length = 10,default="")
     status = models.CharField("審核狀態", max_length=10, choices = STATUS_CHOICES , default='待審核')
-    
     device_amount = models.PositiveIntegerField(default=1)
-    
-    classroom = models.CharField(max_length = 10)
-    
-    
-class time(models.Model):
-    start_date = models.DateField("開始日期",null=True, blank=True)
-    end_date = models.DateField("結束日期",null=True, blank=True)
-    PERIODS_CHOICES = (
-        ('1', '第一節'),
-        ('2', '第二節'),
-        ('3', '第三節'),
-        ('4', '第四節'),
-        ('5', '第五節'),
-        ('6', '第六節'),
-        ('7', '第七節'),
-        ('8', '第八節'),
-        ('4.5', '午休'),
-    )
-    periods = models.CharField(
-        max_length=50, 
-        choices=PERIODS_CHOICES, 
-        verbose_name="節次",
-        default='1'
-    )
-    DAY_CHOICES = (
-        ('Monday','星期一'),
-        ('Tuesday','星期二'),
-        ('Wednesday','星期三'),
-        ('Thursday','星期四'),
-        ('Friday','星期五'),
-    )
-    day = models.CharField(
-        choices=DAY_CHOICES,
-        max_length=50, 
-        verbose_name="星期")
-
+    classroom = models.CharField(max_length=10, blank=True, null=True)
 
 
 class devicecar(models.Model):
@@ -129,3 +88,4 @@ class reservationlist(models.Model):
     devicecar_id = models.IntegerField()
     class Meta: 
         db_table = 'show_reservationlist'
+
