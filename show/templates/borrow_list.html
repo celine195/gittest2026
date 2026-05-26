@@ -35,8 +35,8 @@
 
     <div class="container">
         <div class="nav">
-            <a href="{% url 'view_borrow_list' %}">🗂️ 查看預約總表 </a>
-            <a href="">📋 查看初核資料</a>
+            <a href="{% url 'allreservation_view' %}">🗂️ 查看預約總表 </a>
+            <a href="view_borrow_list">📋 查看初核資料</a>
             <a href="{% url 'submit_borrow' %}">📝 填寫借用表單</a>
             <a href="{% url 'today_reservation' %}">📅 查看今日預約</a>
         </div>
@@ -216,7 +216,7 @@
                         {% endif %}
                     </td>
                     <td>{{ record.classroom }}</td>
-                    <td>{{ record.device_type }}</td>
+                    <td>{{ record.device_type }} $$$</td>
                     <td>{{ record.quantity }} 台</td>
                     <td>
                         {% if record.status == '待審核' %}

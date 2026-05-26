@@ -15,7 +15,10 @@ def reservation_create(request):
         form = ReservationForm(request.POST)
         device_form = DeviceForm(request.POST)
         time_form = TimeForm(request.POST)
+        print(form.is_valid())
         
+        print(device_form.is_valid())
+        print(time_form.is_valid())
         if form.is_valid() and device_form.is_valid() and time_form.is_valid():
             reservation = form.save(commit=False)
             reservation.user = request.user 
