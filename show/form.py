@@ -5,7 +5,13 @@ from .models import Borrowlist, device, time
 class ReservationForm(forms.ModelForm):
     class Meta:
         model = Borrowlist
-        fields = "__all__"
+        fields = ['phone', 'location', 'classroom', 'usage_type', 'start_date', 'end_date', 'day', 'periods', 'device_amount']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'day': forms.Select(attrs={'class': 'form-control'}),
+            'periods': forms.Select(attrs={'class': 'form-control'}),
+        }
 
 class DeviceForm(forms.ModelForm):
     class Meta:
