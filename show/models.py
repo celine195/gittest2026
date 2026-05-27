@@ -61,6 +61,8 @@ class Borrowlist(models.Model):
         ('4.5', '午休'), ('5', '第五節'), ('6', '第六節'), ('7', '第七節'), ('8', '第八節'),
     )
     periods = models.CharField("預約節次", max_length=50, choices=PERIODS_CHOICES, default='1')
+
+    exclude_weeks = models.CharField("排除週次/備註", max_length=100, blank=True, default="")
     
     STATUS_CHOICES = (
         ('待審核', '待審核'),

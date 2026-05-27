@@ -102,6 +102,7 @@
     </style>
 </head>
 <body>
+    
     {% if user.is_authenticated %}
         <div class="top-nav">
             <div>
@@ -177,7 +178,7 @@
 
                     <div style="margin-bottom: 20px;">
                         <label>不包含的週次/日期：</label>
-                        <input type="text" placeholder="若無請留空">
+                        <input type="text" name="exclude_weeks" placeholder="若無請留空" class="form-control">
                     </div>
 
 

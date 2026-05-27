@@ -27,10 +27,11 @@ def reservation_create(request):
                     # 💡 2. 核心修正：直接去拿網頁上打的老師名字文字，塞進 user 欄位
                     # ❌ 絕對不要寫成 reservation.user = request.user 喔！
                     reservation.user = request.POST.get('user')
-                    
+                    reservation.exclude_weeks = request.POST.get('exclude_weeks', '')
                     # 3. 正式存檔（這樣 Django 就會自動把日期、裝置、名字全部一起存進去！）
                     reservation.save()
-                    return redirect('/reservations/')
+                    messages.success(request, "🎉 您的借用申請已成功送出！請等待管理員審核。")
+                    return redirect('allreservation_view')
             except Exception as e:
                 print("❌ 存檔時發生資料庫錯誤：", e)
         else:

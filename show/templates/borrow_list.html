@@ -100,10 +100,10 @@
 
 
                     <td>
-                        {% if record.time %}
-                            {{ record.time.get_day_display }} {{ record.time.get_periods_display }}
+                        {% if record.exclude_weeks %}
+                            {{ record.exclude_weeks }}
                         {% else %}
-                            —
+                            ---
                         {% endif %}
                     </td>
 

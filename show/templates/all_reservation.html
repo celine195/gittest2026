@@ -15,7 +15,16 @@
     </style>
 </head>
 <body>
-
+{% if messages %}
+    <div style="margin: 20px auto; max-width: 700px;">
+        {% for message in messages %}
+            <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px 20px; border-radius: 6px; font-weight: 500; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <span style="margin-right: 10px; font-size: 18px;">✔️</span>
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 <div class="container-fluid">
     <div class="table-container">
         <a href="{% url 'allreservation_view' %}">🗂️ 查看預約總表 </a>
