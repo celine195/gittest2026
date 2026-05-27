@@ -98,8 +98,9 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                
-
+                next_url = request.GET.get('next') or request.POST.get('next')
+                if next_url:
+                    return redirect(next_url)
                 if hasattr(user, 'role') and user.role == 'admin':
                     return redirect('today_reservation')  
                 else:
@@ -115,8 +116,13 @@ def login_view(request):
 
 
 def logout_view(request):
+    next_url = request.GET.get('next') or request.POST.get('next')
     logout(request)
-    return redirect('login')  
+    if next_url:
+        return redirect(next_url)
+    else:
+        return redirect('login')
+    
 
 
 def all_reservation_list(request):

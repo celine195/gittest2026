@@ -24,12 +24,13 @@
         <a href="{% url 'today_reservation' %}">📅 查看今日預約</a>
         {% if user.is_authenticated %}
                 <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
-                <a href="{% url 'logout' %}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
+                <a href="{% url 'logout' %}?next={{ request.path }}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
             {% else %}
-                <a href="{% url 'login' %}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
+                <a href="{% url 'login' %}?next={{ request.path }}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
             {% endif %}
-        <h2 class="mb-4 text-center text-dark fw-bold">🗂️ 圖書館公用載具預約總看盤</h2>
 
+    <h2 class="mb-4 text-center text-dark fw-bold">🗂️ 圖書館公用載具預約總看盤</h2>
+    
         <div class="table-responsive">
             <table>
                 <thead>
@@ -48,11 +49,8 @@
                 <tbody>
                     {% for record in borrow_records %}
                         <tr>
-
                         <td>{{ record.user }}</td>
-
                         <td>{{ record.phone }}</td>
-
                         <td>
                             {% if record.usage_type == 'once' %}
                                 <span class="badge bg-primary">單次</span>
@@ -60,21 +58,12 @@
                                 <span class="badge bg-success">每週</span>
                             {% endif %}
                         </td>
-
-                        
-
-
                         <td>
                             {{record.start_date}}~{{record.end_date}}
-
                         </td>
-
-                        
                         <td>
                             {{ record.get_periods_display }}
                         </td>
-
-
                         <td>
                             {% if record.time %}
                                 {{ record.time.get_day_display }} {{ record.time.get_periods_display }}
@@ -82,19 +71,15 @@
                                 —
                             {% endif %}
                         </td>
-
-                        
-
                         <td>{{ record.location }}</td>
-
                         <td>{{ record.device_id.get_device_type_display }}</td>
-
                         <td>{{ record.device_amount }} 台</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+    
     </div>
 </div>
 
