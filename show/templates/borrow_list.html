@@ -35,10 +35,17 @@
 
     <div class="container">
         <div class="nav">
+            
             <a href="{% url 'allreservation_view' %}">🗂️ 查看預約總表 </a>
             <a href="{% url 'view_borrow_list' %}">📋 查看初核資料</a>
             <a href="{% url 'submit_borrow' %}">📝 填寫借用表單</a>
             <a href="{% url 'today_reservation' %}">📅 查看今日預約</a>
+            {% if user.is_authenticated %}
+                <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
+                <a href="{% url 'logout' %}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
+            {% else %}
+                <a href="{% url 'login' %}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
+            {% endif %}
         </div>
         <hr>
 
@@ -109,20 +116,26 @@
                     <td>{{ record.device_amount }} 台</td>
 
                     <td>
-                        {% if record.status == '待審核' %}
-                            <form method="POST" action="{% url 'view_borrow_list' %}"style="display:inline;">
-                                {% csrf_token %}
-                                <input type="hidden" name="record_id" value="{{ record.id }}">
-                                <button type="submit" name="action" value="approve" class="btn btn-sm btn-approved" onclick="return confirm('確定要核准這筆借用嗎？')">✔️ 核准</button>
-                                <button type="submit" name="action" value="reject" class="btn btn-sm btn-reject" onclick="return confirm('確定要拒絕嗎？')">❌ 拒絕</button>
-                             </form>
-                        {% elif record.status == '已核准' %}
-                            <span class="badge bg-info">已核准</span>
-                        {% elif record.status == '已拒絕' %}
-                            <span class="badge bg-warning">已拒絕</span>
+
+                        {% if user.is_authenticated %}
+                            {% if record.status == '待審核' %}
+                                <form method="POST" action="{% url 'view_borrow_list' %}"style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="record_id" value="{{ record.id }}">
+                                    <button type="submit" name="action" value="approve" class="btn btn-sm btn-approved" onclick="return confirm('確定要核准這筆借用嗎？')">✔️ 核准</button>
+                                    <button type="submit" name="action" value="reject" class="btn btn-sm btn-reject" onclick="return confirm('確定要拒絕嗎？')">❌ 拒絕</button>
+                                 </form>
+                            {% elif record.status == '已核准' %}
+                                <span class="badge bg-info">已核准</span>
+                            {% elif record.status == '已拒絕' %}
+                                <span class="badge bg-warning">已拒絕</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ record.status }}</span>
+                            {% endif %}
                         {% else %}
-                            <span class="badge bg-secondary">{{ record.status }}</span>
+                        <span class="text-muted">請先登入後審核</span>
                         {% endif %}
+
                         </td>
                         </tr>
                         {% empty %}
