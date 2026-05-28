@@ -42,9 +42,9 @@
             <a href="{% url 'today_reservation' %}">📅 查看今日預約</a>
             {% if user.is_authenticated %}
                 <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
-                <a href="{% url 'logout' %}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
+                <a href="{% url 'logout' %}?next={{ request.path }}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
             {% else %}
-                <a href="{% url 'login' %}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
+                <a href="{% url 'login' %}?next={{ request.path }}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
             {% endif %}
         </div>
         <hr>
@@ -100,10 +100,10 @@
 
 
                     <td>
-                        {% if record.time %}
-                            {{ record.time.get_day_display }} {{ record.time.get_periods_display }}
+                        {% if record.exclude_weeks %}
+                            {{ record.exclude_weeks }}
                         {% else %}
-                            —
+                            ---
                         {% endif %}
                     </td>
 

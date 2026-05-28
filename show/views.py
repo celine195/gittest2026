@@ -25,9 +25,11 @@ def reservation_create(request):
                     
 
                     reservation.user = request.POST.get('user')
-                    
+                    reservation.exclude_weeks = request.POST.get('exclude_weeks', '')
+                    # 3. 正式存檔（這樣 Django 就會自動把日期、裝置、名字全部一起存進去！）
                     reservation.save()
-                    return redirect('/reservations/')
+                    messages.success(request, "🎉 您的借用申請已成功送出！請等待管理員審核。")
+                    return redirect('allreservation_view')
             except Exception as e:
                 print("存檔時發生資料庫錯誤：", e)
         else:
@@ -64,12 +66,13 @@ def view_borrow_list(request):
             
         # 處理完後，重新導向回自己，刷新頁面狀態
         return HttpResponseRedirect('/borrow/')
-
+    
     # 平常管理員直接進網頁時（GET 請求），只負責顯示名單
     borrow_records = Borrowlist.objects.all().order_by('-id')
     return render(request, 'borrow_list.html', {
         'borrow_records': borrow_records
     })
+
 
 
 def today_reservation_list(request):
@@ -93,8 +96,9 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                
-
+                next_url = request.GET.get('next') or request.POST.get('next')
+                if next_url:
+                    return redirect(next_url)
                 if hasattr(user, 'role') and user.role == 'admin':
                     return redirect('today_reservation')  
                 else:
@@ -110,8 +114,13 @@ def login_view(request):
 
 
 def logout_view(request):
+    next_url = request.GET.get('next') or request.POST.get('next')
     logout(request)
-    return redirect('login')  
+    if next_url:
+        return redirect(next_url)
+    else:
+        return redirect('login')
+    
 
 
 def all_reservation_list(request):

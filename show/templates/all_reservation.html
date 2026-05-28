@@ -15,7 +15,16 @@
     </style>
 </head>
 <body>
-
+{% if messages %}
+    <div style="margin: 20px auto; max-width: 700px;">
+        {% for message in messages %}
+            <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px 20px; border-radius: 6px; font-weight: 500; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <span style="margin-right: 10px; font-size: 18px;">✔️</span>
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 <div class="container-fluid">
     <div class="table-container">
         <a href="{% url 'allreservation_view' %}">🗂️ 查看預約總表 </a>
@@ -24,12 +33,13 @@
         <a href="{% url 'today_reservation' %}">📅 查看今日預約</a>
         {% if user.is_authenticated %}
                 <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
-                <a href="{% url 'logout' %}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
+                <a href="{% url 'logout' %}?next={{ request.path }}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
             {% else %}
-                <a href="{% url 'login' %}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
+                <a href="{% url 'login' %}?next={{ request.path }}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
             {% endif %}
-        <h2 class="mb-4 text-center text-dark fw-bold">🗂️ 圖書館公用載具預約總看盤</h2>
 
+    <h2 class="mb-4 text-center text-dark fw-bold">🗂️ 圖書館公用載具預約總看盤</h2>
+    
         <div class="table-responsive">
             <table>
                 <thead>
@@ -48,11 +58,8 @@
                 <tbody>
                     {% for record in borrow_records %}
                         <tr>
-
                         <td>{{ record.user }}</td>
-
                         <td>{{ record.phone }}</td>
-
                         <td>
                             {% if record.usage_type == 'once' %}
                                 <span class="badge bg-primary">單次</span>
@@ -60,21 +67,12 @@
                                 <span class="badge bg-success">每週</span>
                             {% endif %}
                         </td>
-
-                        
-
-
                         <td>
                             {{record.start_date}}~{{record.end_date}}
-
                         </td>
-
-                        
                         <td>
                             {{ record.get_periods_display }}~{{ record.get_periods_end_display }}
                         </td>
-
-
                         <td>
                             {% if record.time %}
                                 {{ record.time.get_day_display }} {{ record.time.get_periods_display }}
@@ -82,19 +80,15 @@
                                 —
                             {% endif %}
                         </td>
-
-                        
-
                         <td>{{ record.location }}</td>
-
                         <td>{{ record.device_id.get_device_type_display }}</td>
-
                         <td>{{ record.device_amount }} 台</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+    
     </div>
 </div>
 

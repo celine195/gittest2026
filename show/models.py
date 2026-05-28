@@ -85,6 +85,13 @@ class devicecar(models.Model):
         max_length=100, 
         )
     device_amount = models.PositiveIntegerField(default=1)
+    DEVICE_CHOICES =(
+        ('ipad', 'iPad'),
+        ('chromebook', 'Chromebook'),
+        ('surface_go', 'Surface Go'),
+        ('acer_laptop', 'Acer 小筆電'),
+    )
+    device_type = models.CharField("載具種類", max_length=20, choices=DEVICE_CHOICES,blank=True)
 
 class reservationlist(models.Model):
     list_id = models.IntegerField()

@@ -98,6 +98,7 @@
     {% endif %}
 
     <form method="post">
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
         {% csrf_token %}
         <div class="form-group">
             <label for="id_username">使用者帳號 (公務信箱)：</label>
