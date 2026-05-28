@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>系統登入 - 學校圖書館公用載具借用管理系統</title>
+    <title>系統登入 - 學校圖書館公用載具借用系統</title>
     <style>
         body {
             font-family: "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
@@ -101,7 +101,7 @@
         <input type="hidden" name="next" value="{{ request.GET.next }}">
         {% csrf_token %}
         <div class="form-group">
-            <label for="id_username">使用者帳號 (公務信箱)：</label>
+            <label for="id_username">使用者帳號:</label>
             <input type="text" name="username" id_username required placeholder="請輸入帳號">
         </div>
         <div class="form-group">

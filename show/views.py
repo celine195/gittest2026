@@ -26,7 +26,6 @@ def reservation_create(request):
 
                     reservation.user = request.POST.get('user')
                     reservation.exclude_weeks = request.POST.get('exclude_weeks', '')
-                    # 3. 正式存檔（這樣 Django 就會自動把日期、裝置、名字全部一起存進去！）
                     reservation.save()
                     messages.success(request, "🎉 您的借用申請已成功送出！請等待管理員審核。")
                     return redirect('allreservation_view')
@@ -64,10 +63,8 @@ def view_borrow_list(request):
             record.save()
             messages.warning(request, f"已拒絕 #{record.id} 的借用申請。")
             
-        # 處理完後，重新導向回自己，刷新頁面狀態
         return HttpResponseRedirect('/borrow/')
     
-    # 平常管理員直接進網頁時（GET 請求），只負責顯示名單
     borrow_records = Borrowlist.objects.all().order_by('-id')
     return render(request, 'borrow_list.html', {
         'borrow_records': borrow_records
@@ -76,12 +73,8 @@ def view_borrow_list(request):
 
 
 def today_reservation_list(request):
-
     today = timezone.localdate()
-
     today_records = Borrowlist.objects.filter(start_date=today).order_by('time_id')
-    
-
     return render(request, 'today_reservation.html', {
         'today_records': today_records,
         'today': today

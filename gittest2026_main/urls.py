@@ -20,7 +20,6 @@ from show import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path("",include("show.urls")),
     path('reservations/', views.reservation_create,name='submit_borrow'),
     path('borrow/', views.view_borrow_list, name='view_borrow_list'),
     path('today/', views.today_reservation_list, name='today_reservation'),
