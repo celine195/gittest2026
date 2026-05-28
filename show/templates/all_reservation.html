@@ -5,41 +5,62 @@
     <title>公用載具預約看盤總表</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { padding: 30px; background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
-        .table-container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-        .table th { background-color: #212529; color: white; text-align: center; vertical-align: middle; }
-        .table td { text-align: center; vertical-align: middle; height: 90px; min-width: 140px; }
-        .slot-booked { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 6px; padding: 6px; font-size: 0.9rem; }
-        .slot-available { color: #198754; font-weight: bold; font-size: 1.1rem; }
-        .period-col { background-color: #f8f9fa; font-weight: bold; width: 120px; }
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; color: #333; }
+        .container { max-width: 1200px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin: 0 auto; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #59789a; font-weight: bold; }
+        h2 { margin-top: 0; color: #212529; border-left: 5px solid #59789a; padding-left: 10px; }
+        p { color: #6c757d; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        th, td { border: 1px solid #dee2e6; padding: 12px 10px; text-align: left; }
+        th { background-color: #59789a; color: white; font-weight: 600; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #f1f3f5; }
+        /* 狀態標籤樣式 */
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .badge-pending { background-color: #55534b; color: #856404; } /* 待審核 */
+        .badge-approved { background-color: #d4edda; color: #155724; } /* 已核准 */
+        .badge-rejected { background-color: #f8d7da; color: #721c24; } /* 已拒絕 */
+        .badge-once { background-color: #e2e3e5; color: #383d41; }
+        .badge-weekly { background-color: #cce5ff; color: #004085; }
+        .empty-msg { text-align: center; color: #adb5bd; padding: 40px 0; font-size: 16px; }
+        .btn { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 4px; }
+        .btn-approved { background-color: #86d196; color: white; }
+        .btn-approved:hover { background-color: #86d196; }
+        .btn-reject { background-color: #c36d5c; color: rgb(255, 255, 255); }
+        .btn-reject:hover { background-color:#c36d5c; }
+        .text-muted { color: #999; font-style: italic; font-size: 13px; }
     </style>
 </head>
 <body>
-{% if messages %}
-    <div style="margin: 20px auto; max-width: 700px;">
-        {% for message in messages %}
-            <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px 20px; border-radius: 6px; font-weight: 500; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <span style="margin-right: 10px; font-size: 18px;">✔️</span>
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
-<div class="container-fluid">
-    <div class="table-container">
-        <a href="{% url 'allreservation_view' %}">🗂️ 查看預約總表 </a>
-        <a href="{% url 'view_borrow_list' %}">📋 查看初核資料</a>
-        <a href="{% url 'submit_borrow' %}">📝 填寫借用表單</a>
-        <a href="{% url 'today_reservation' %}">📅 查看今日預約</a>
-        {% if user.is_authenticated %}
+    {% if messages %}
+        <div style="margin: 20px auto; max-width: 700px;">
+            {% for message in messages %}
+                <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px 20px; border-radius: 6px; font-weight: 500; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <span style="margin-right: 10px; font-size: 18px;">✔️</span>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="nav">
+            
+            <a href="{% url 'allreservation_view' %}">🗂️ 查看預約總表 </a>
+            <a href="{% url 'view_borrow_list' %}">📋 查看初核資料</a>
+            <a href="{% url 'submit_borrow' %}">📝 填寫借用表單</a>
+            <a href="{% url 'today_reservation' %}">📅 查看今日預約</a>
+            {% if user.is_authenticated %}
                 <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
                 <a href="{% url 'logout' %}?next={{ request.path }}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
             {% else %}
                 <a href="{% url 'login' %}?next={{ request.path }}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
             {% endif %}
+        </div>
 
-    <h2 class="mb-4 text-center text-dark fw-bold">🗂️ 圖書館公用載具預約總看盤</h2>
     
+    <h2>🗂️ 圖書館公用載具預約總看盤</h2>
         <div class="table-responsive">
             <table>
                 <thead>
@@ -53,6 +74,7 @@
                         <th>使用教室</th>
                         <th>載具種類</th>
                         <th>申請數量</th>
+                        <th>審核狀態</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,21 +90,39 @@
                             {% endif %}
                         </td>
                         <td>
-                            {{record.start_date}}~{{record.end_date}}
+                            {{record.start_date|date:"Y/m/d"}}~{{record.end_date|date:"Y/m/d"}}
                         </td>
                         <td>
                             {{ record.get_periods_display }}
                         </td>
                         <td>
-                            {% if record.time %}
-                                {{ record.time.get_day_display }} {{ record.time.get_periods_display }}
+                            {% if record.exclude_weeks %}
+                            {{ record.exclude_weeks }}
                             {% else %}
-                                —
+                                ---
                             {% endif %}
                         </td>
                         <td>{{ record.location }}</td>
                         <td>{{ record.device_id.get_device_type_display }}</td>
                         <td>{{ record.device_amount }} 台</td>
+                        <td>
+
+                        {% if user.is_authenticated %}
+
+                            {% if record.status == '待審核' %}
+                                <span class="text-muted">待審核</span>
+                            {% elif record.status == '已核准' %}
+                                <span class="badge badge-approved">已核准</span>
+                            {% elif record.status == '已拒絕' %}
+                                <span class="badge badge-rejected">已拒絕</span>
+                            {% endif %}
+
+                        {% endif %}
+                        
+                        
+
+                        </td>
+
                         </tr>
                     {% endfor %}
                 </tbody>

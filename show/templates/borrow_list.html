@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理員後台 - 查看初核資料</title>
     <style>
+
+        
+    
+
+
+
         body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; color: #333; }
         .container { max-width: 1200px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin: 0 auto; }
         .nav { margin-bottom: 20px; }
@@ -29,6 +35,8 @@
         .btn-reject { background-color: #c36d5c; color: rgb(255, 255, 255); }
         .btn-reject:hover { background-color:#c36d5c; }
         .text-muted { color: #999; font-style: italic; font-size: 13px; }
+        
+        
     </style>
 </head>
 <body>
@@ -47,7 +55,7 @@
                 <a href="{% url 'login' %}?next={{ request.path }}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
             {% endif %}
         </div>
-        <hr>
+        
 
         <h2>📋 管理員初核系統 — 借用申請資料總表</h2>
         <p>本功能供管理員審查教師送出的載具申請表單，確認無誤後可進行核准與載具車分配。</p>
@@ -89,7 +97,7 @@
 
 
                     <td>
-                        {{record.start_date}}~{{record.end_date}}
+                        {{record.start_date|date:"Y/m/d"}}~{{record.end_date|date:"Y/m/d"}}
 
                     </td>
 
@@ -122,8 +130,8 @@
                                 <form method="POST" action="{% url 'view_borrow_list' %}"style="display:inline;">
                                     {% csrf_token %}
                                     <input type="hidden" name="record_id" value="{{ record.id }}">
-                                    <button type="submit" name="action" value="approve" class="btn btn-sm btn-approved" onclick="return confirm('確定要核准這筆借用嗎？')">✔️ 核准</button>
-                                    <button type="submit" name="action" value="reject" class="btn btn-sm btn-reject" onclick="return confirm('確定要拒絕嗎？')">❌ 拒絕</button>
+                                    <button type="submit" name="action" value="approve" class="btn btn-sm btn-approved" onclick="return confirm('確定要核准這筆借用嗎？')"> 核准</button>
+                                    <button type="submit" name="action" value="reject" class="btn btn-sm btn-reject" onclick="return confirm('確定要拒絕嗎？')"> 拒絕</button>
                                  </form>
                             {% elif record.status == '已核准' %}
                                 <span class="badge bg-info">已核准</span>
@@ -136,7 +144,7 @@
                         <span class="text-muted">請先登入後審核</span>
                         {% endif %}
 
-                        </td>
+                    </td>
                         </tr>
                         {% empty %}
                         <tr>
