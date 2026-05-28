@@ -48,10 +48,7 @@ def reservation_create(request):
     })
 
 def view_borrow_list(request):
-    """
-    頁面：管理員初核頁面
-    功能：查看所有教師送出的借用申請資料
-    """
+    
     if request.method == "POST":
         record_id = request.POST.get('record_id')
         action = request.POST.get('action')
