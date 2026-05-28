@@ -70,12 +70,13 @@ def view_borrow_list(request):
             
         # 處理完後，重新導向回自己，刷新頁面狀態
         return HttpResponseRedirect('/borrow/')
-
+    
     # 平常管理員直接進網頁時（GET 請求），只負責顯示名單
     borrow_records = Borrowlist.objects.all().order_by('-id')
     return render(request, 'borrow_list.html', {
         'borrow_records': borrow_records
     })
+
 
 
 def today_reservation_list(request):
