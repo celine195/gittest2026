@@ -103,12 +103,9 @@
                             {% endif %}
                         </td>
                         <td>{{ record.location }}</td>
-                        <td>{{ record.device_id.get_device_type_display }}</td>
+                        <td>{{ record.get_device_type_display }}</td>
                         <td>{{ record.device_amount }} 台</td>
                         <td>
-
-                        {% if user.is_authenticated %}
-
                             {% if record.status == '待審核' %}
                                 <span class="text-muted">待審核</span>
                             {% elif record.status == '已核准' %}
@@ -116,11 +113,6 @@
                             {% elif record.status == '已拒絕' %}
                                 <span class="badge badge-rejected">已拒絕</span>
                             {% endif %}
-
-                        {% endif %}
-                        
-                        
-
                         </td>
 
                         </tr>

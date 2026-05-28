@@ -2,215 +2,174 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>填寫借用表單</title>
     <style>
-        body {
-            font-family: "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
-            background-color: #f4f6f9;
-            color: #333333;
-            margin: 0;
-            padding: 0;
-        }
-
-        .top-nav {
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background-color: #ffffff; 
-            padding: 15px 40px; 
-            border-bottom: 1px solid #e2e8f0; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .main-content {
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-            box-sizing: border-box;
-        }
-
-
-        .container {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            width: 100%;
-            max-width: 700px; 
-            padding: 40px;
-            box-sizing: border-box;
-        }
-
-        h2 {
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 24px;
-            color: #1a1a1a;
-            border-left: 5px solid #0056b3;
-            padding-left: 12px;
-            font-weight: 600;
-        }
-
-
-        form label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: #4a5568;
-            font-size: 15px;
-        }
-
-   
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; color: #333; }
+        .container { max-width: 700px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin: 0 auto; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #59789a; font-weight: bold; }
+        h2 { margin-top: 0; color: #212529; border-left: 5px solid #59789a; padding-left: 10px; margin-bottom: 25px; }
+        p { color: #6c757d; font-size: 14px; }
+        
+        /* 表單欄位統一樣式 */
+        .form-group { margin-bottom: 20px; }
+        form label { display: block; font-weight: 600; margin-bottom: 8px; color: #495057; font-size: 14px; }
+        
+        /* 讓 Django 自動渲染的表單元件與自訂 input 擁有相同外觀 */
         form input[type="text"], 
         form input[type="date"], 
-        form select {
+        form input[type="number"], 
+        form select,
+        .form-control {
             width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 15px;
+            padding: 10px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 14px;
             background-color: #fff;
             box-sizing: border-box;
-            transition: border-color 0.2s;
+            color: #495057;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         }
 
-        form input:focus, form select:focus {
+        form input:focus, form select:focus, .form-control:focus {
             outline: none;
-            border-color: #0056b3;
-            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+            border-color: #59789a;
+            box-shadow: 0 0 0 3px rgba(89, 120, 154, 0.15);
         }
 
+        /* 錯誤訊息提示區塊 */
+        .error-alert {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        /* 按鈕樣式 */
         .btn-submit {
-            background-color: #0056b3; 
+            background-color: #59789a; 
             color: #ffffff; 
             border: none;
             padding: 12px 24px; 
-            border-radius: 6px; 
-            font-size: 16px;
-            font-weight: 600; 
+            border-radius: 4px; 
+            font-size: 15px;
+            font-weight: bold; 
             cursor: pointer;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 10px;
             transition: background-color 0.2s;
         }
-
         .btn-submit:hover {
-            background-color: #004085;
+            background-color: #465e78;
         }
+
+        .text-muted { color: #999; font-style: italic; font-size: 14px; }
+        .text-center { text-align: center; }
     </style>
 </head>
 <body>
     
-    {% if user.is_authenticated %}
-        <div class="top-nav">
-            <div>
-                <a href="{% url 'allreservation_view' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">🗂️ 查看預約總表 </a>
-                <a href="{% url 'view_borrow_list' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">📋 查看初核資料 </a>
-                <a href="{% url 'submit_borrow' %}" style="text-decoration: none; color: #0056b3; font-weight: 600; display: inline-block;">📝 填寫借用表單</a>
-                <a href="{% url 'today_reservation' %}" style="margin-right: 25px; text-decoration: none; color: #4a5568; font-weight: 500; display: inline-block;">📅 查看今日預約</a>
-            </div>
-                <div style="font-size: 14px;">
-                {% if user.is_authenticated %}
-                    <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
-                    <a href="{% url 'logout' %}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
-                {% else %}
-                    <a href="{% url 'login' %}?next={{ request.path }}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: 500; display: inline-block;">登入系統</a>
-                {% endif %}
-            </div>
+    <div class="container">
+        <div class="nav">
+            <a href="{% url 'allreservation_view' %}">🗂️ 查看預約總表 </a>
+            <a href="{% url 'view_borrow_list' %}">📋 查看初核資料</a>
+            <a href="{% url 'submit_borrow' %}">📝 填寫借用表單</a>
+            <a href="{% url 'today_reservation' %}">📅 查看今日預約</a>
+
+            {% if user.is_authenticated %}
+                <div>
+                <span style="color: #4a5568; margin-right: 15px;">👋 你好，<strong style="color: #0056b3;">{{ user.username }}</strong></span>
+                <a href="{% url 'logout' %}?next={{ request.path }}" style="color: #dc2626; text-decoration: underline; font-weight: 500;">登出</a>
+                </div>
+            {% endif %}
         </div>
 
-    <div class="main-content">
-        <div class="container">
+        {% if user.is_authenticated %}
             <h2>📝 填寫借用表單</h2>
            
             <form method="post">
                 {% csrf_token %}
                 {% if form.non_field_errors %}
-                    <div style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; border-radius: 5px; margin-bottom: 20px; font-weight: bold; font-size: 15px;">
+                    <div class="error-alert">
                         {% for error in form.non_field_errors %}
-                        <div>欄位驗證失敗：{{ error }}</div>
-                        請重新檢查您的「借用日期」與「借用節次」開始與結束時間是否前後倒置。
+                        <div style="font-weight: bold; margin-bottom: 5px;">欄位驗證失敗：{{ error }}</div>
                         {% endfor %}
+                        請重新檢查您的「借用日期」與「借用節次」開始與結束時間是否前後倒置。
                     </div>
                 {% endif %}
 
-                <div style="margin-bottom: 20px;">
+                <div class="form-group">
                     <label>借用老師：</label>
-                    <input type="text" name="user" class="form-control" placeholder="請輸入老師姓名" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="text" name="user" class="form-control" placeholder="請輸入老師姓名" required>
                 </div>
 
+                <div class="form-group">
+                    <label>連絡電話：</label>
+                    {{ form.phone }}
+                </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <label>連絡電話：</label>
-                        {{ form.phone }}
-                    </div>
+                <div class="form-group">
+                    <label>教室：</label>
+                    {{ form.location }}
+                </div>
 
+                <div class="form-group">
+                    <label>使用類型：</label>
+                    {{ form.usage_type }}
+                </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <label>教室：</label>
-                        {{ form.location }}
-                    </div>
+                <div class="form-group">
+                    <label>載具類型：</label>
+                    {{ device_form.device_type }}
+                </div>
 
+                <div class="form-group">
+                    <label>借用數量:</label>
+                    {{ form.device_amount }}
+                </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <label>使用類型：</label>
-                        {{ form.usage_type }}
-                    </div>
+                <div class="form-group">
+                    <label>借用開始日期：</label>
+                    {{ time_form.start_date }}
+                </div>
 
+                <div class="form-group">
+                    <label>借用結束日期(若只借一天，則同上即可)：</label>
+                    {{ time_form.end_date }}
+                </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <label>載具類型：</label>
-                        {{ device_form.device_type }}
-                    </div>
+                <div class="form-group">
+                    <label>不包含的週次/日期(若為每周借用，可備註有哪些週次不借)：</label>
+                    <input type="text" name="exclude_weeks" placeholder="若無請留空" class="form-control">
+                </div>
 
-
-                    <div style="margin-bottom: 20px;">
-                        <label>借用數量(散借填寫台數，車借填寫車數):</label>
-                        {{ form.device_amount }}
-                    </div>
-
-
-                    <div style="margin-bottom: 20px;">
-                        <label>借用開始日期：</label>
-                        {{ time_form.start_date }}
-                    </div>
-
-
-                    <div style="margin-bottom: 20px;">
-                        <label>借用結束日期：</label>
-                        {{ time_form.end_date }}
-                    </div>
-
-
-                    <div style="margin-bottom: 20px;">
-                        <label>不包含的週次/日期：</label>
-                        <input type="text" name="exclude_weeks" placeholder="若無請留空" class="form-control">
-                    </div>
-
-
-                <div style="margin-bottom: 25px;">
+                <div class="form-group">
                     <label>開始借用節次：</label>
                     {{ time_form.periods }}
                 </div>
 
-                <div style="margin-bottom: 25px;">
-                    <label>結束借用節次：</label>
+                <div class="form-group">
+                    <label>結束借用節次(若只借一節課，則同上即可)：</label>
                     {{ time_form.periods_end }}
                 </div>
 
-                    <button type="submit" class="btn-submit">送出申請表單</button>
-                </form>
+                <button type="submit" class="btn-submit">送出申請表單</button>
+            </form>
+
+        {% else %}
+            <div class="text-center" style="margin: 50px 0;">
+                <span class="text-muted" style="display: block; margin-bottom: 20px; font-size: 16px;">請先登入，登入後才可填寫</span>
+                <a href="{% url 'login' %}?next={{ request.path }}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 10px 30px; border-radius: 4px; font-weight: 500; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    登入系統
+                </a>
             </div>
-        </div>
-    {% else %}
-    <div style="text-align: center; margin: 50px 0;">
-        <span class="text-muted" style="display: block; margin-bottom: 15px; font-size: 16px;">請先登入</span>
-        <a href="{% url 'login' %}?next={{ request.path }}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 10px 30px; border-radius: 4px; font-weight: 500; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            登入系統
-        </a>
+        {% endif %}
     </div>
-{% endif %}
+
 </body>
 </html>

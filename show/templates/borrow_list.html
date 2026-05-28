@@ -6,11 +6,6 @@
     <title>管理員後台 - 查看初核資料</title>
     <style>
 
-        
-    
-
-
-
         body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; color: #333; }
         .container { max-width: 1200px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin: 0 auto; }
         .nav { margin-bottom: 20px; }
@@ -125,7 +120,7 @@
 
                     <td>
 
-                        {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
                             {% if record.status == '待審核' %}
                                 <form method="POST" action="{% url 'view_borrow_list' %}"style="display:inline;">
                                     {% csrf_token %}
@@ -141,7 +136,7 @@
                                 <span class="badge bg-secondary">{{ record.status }}</span>
                             {% endif %}
                         {% else %}
-                        <span class="text-muted">請先登入後審核</span>
+                        <span class="text-muted">請先登入管理員帳號進行審核</span>
                         {% endif %}
 
                     </td>
