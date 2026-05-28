@@ -126,7 +126,15 @@
            
             <form method="post">
                 {% csrf_token %}
-               
+                {% if form.non_field_errors %}
+                    <div style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; border-radius: 5px; margin-bottom: 20px; font-weight: bold; font-size: 15px;">
+                        {% for error in form.non_field_errors %}
+                        <div>欄位驗證失敗：{{ error }}</div>
+                        請重新檢查您的「借用日期」與「借用節次」開始與結束時間是否前後倒置。
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
                 <div style="margin-bottom: 20px;">
                     <label>借用老師：</label>
                     <input type="text" name="user" class="form-control" placeholder="請輸入老師姓名" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
@@ -182,8 +190,13 @@
 
 
                 <div style="margin-bottom: 25px;">
-                    <label>借用節次：</label>
+                    <label>開始借用節次：</label>
                     {{ time_form.periods }}
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label>結束借用節次：</label>
+                    {{ time_form.periods_end }}
                 </div>
 
                 <button type="submit" class="btn-submit">送出申請表單</button>

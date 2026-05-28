@@ -60,8 +60,14 @@ class Borrowlist(models.Model):
         ('1', '第一節'), ('2', '第二節'), ('3', '第三節'), ('4', '第四節'),
         ('4.5', '午休'), ('5', '第五節'), ('6', '第六節'), ('7', '第七節'), ('8', '第八節'),
     )
-    periods = models.CharField("預約節次", max_length=50, choices=PERIODS_CHOICES, default='1')
-    
+    periods = models.CharField("開始預約節次", max_length=50, choices=PERIODS_CHOICES, default='1')
+
+    PERIODS_END_CHOICES = (
+        ('1', '第一節'), ('2', '第二節'), ('3', '第三節'), ('4', '第四節'),
+        ('4.5', '午休'), ('5', '第五節'), ('6', '第六節'), ('7', '第七節'), ('8', '第八節'),
+    )
+    periods_end = models.CharField("結束預約節次", max_length=50, choices=PERIODS_END_CHOICES, default='1')
+
     STATUS_CHOICES = (
         ('待審核', '待審核'),
         ('已通過', '已通過'),

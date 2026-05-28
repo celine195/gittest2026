@@ -12,7 +12,6 @@ from django.views.generic import ListView
 from django.http import HttpResponseRedirect
 
 def reservation_create(request):
-    # 💡 確保不論是 POST 還是 GET，一進來都先把 form 建立好，徹底解決 UnboundLocalError！
     form = ReservationForm()
     
     if request.method == "POST":
@@ -21,22 +20,19 @@ def reservation_create(request):
         if form.is_valid():
             try:
                 with transaction.atomic():
-                    # 1. 建立預約物件，但先不要寫入資料庫 (commit=False)
+
                     reservation = form.save(commit=False)
                     
-                    # 💡 2. 核心修正：直接去拿網頁上打的老師名字文字，塞進 user 欄位
-                    # ❌ 絕對不要寫成 reservation.user = request.user 喔！
+
                     reservation.user = request.POST.get('user')
                     
-                    # 3. 正式存檔（這樣 Django 就會自動把日期、裝置、名字全部一起存進去！）
                     reservation.save()
                     return redirect('/reservations/')
             except Exception as e:
-                print("❌ 存檔時發生資料庫錯誤：", e)
+                print("存檔時發生資料庫錯誤：", e)
         else:
-            print("❌ 表單驗證失敗！詳細原因：", form.errors)
+            print("表單驗證失敗！詳細原因：", form.errors)
             
-    # 💡 這裡統一交給同一個 Form 元件去渲染畫面
     device_form = form
     time_form = form
 
@@ -54,8 +50,7 @@ def view_borrow_list(request):
     if request.method == "POST":
         record_id = request.POST.get('record_id')
         action = request.POST.get('action')
-        
-        # 抓出這筆申請資料
+
         record = get_object_or_404(Borrowlist, id=record_id)
         
         if action == 'approve':

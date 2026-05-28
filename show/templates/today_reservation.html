@@ -159,17 +159,19 @@
                 <span class="date-badge">今天是：{{ today|date:"Y 年 m 月 d 日" }}</span>
             </div>
             
-            <p class="description">本功能自動篩選今日所有教師借用排程，以便圖書館管理員進行載具車準備與發放作業。</p>
+            <p class="description">本功能顯示今日所有教師借用排程</p>
 
             {% if today_records %}
                 <table>
                     <thead>
                         <tr>
                             <th>預約節次</th>
-                            <th>借用教師</th>
+                            <th>教師姓名</th>
                             <th>聯絡電話</th>
                             <th>使用教室</th>
                             <th>載具種類</th>
+                            <th>申請數量</th>
+                            <th>審核狀態</th>
                             <th>分配載具車</th>
                         </tr>
                     </thead>
@@ -177,12 +179,14 @@
                         {% for record in today_records %}
                             <tr>
                                 <td>
-                                    {{ record.get_periods_display }}
+                                    {{ record.get_periods_display }}~{{ record.get_periods_end_display }}
                                 </td>
                                 <td>{{ record.user }}</td>
                                 <td>{{ record.phone }}</td>
                                 <td>{{ record.location }}</td>
-                                <td>{{ record.device_id.get_device_type_display }}</td>
+                                <td>{{ record.get_device_type_display }}</td>
+                                <td>{{ record.device_amount }} 台</td>
+                                <td>{{ record.status }}</td>
                                 <td>
                                     {% if record.cart %}
                                         🚗 {{ record.cart.id }} 號車 (容量: {{ record.cart.capacity }})
