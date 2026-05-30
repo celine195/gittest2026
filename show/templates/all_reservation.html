@@ -59,7 +59,14 @@
             {% endif %}
         </div>
 
-    
+        <form method="GET" action="">
+        <label for="date-select">選擇日期：</label>
+        <input type="date" id="date-select" name="selected_date" value="{{ date_query|default:'' }}">
+        
+        <button type="submit">篩選</button>
+        
+        <a href="{% url 'allreservation_view' %}"><button type="button">顯示全部</button></a>
+        </form>
     <h2>🗂️ 圖書館公用載具預約總看盤</h2>
         <div class="table-responsive">
             <table>
@@ -78,39 +85,39 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for record in borrow_records %}
+                    {% for event in events %}
                         <tr>
-                        <td>{{ record.user }}</td>
-                        <td>{{ record.phone }}</td>
+                        <td>{{ event.user }}</td>
+                        <td>{{ event.phone }}</td>
                         <td>
-                            {% if record.usage_type == 'once' %}
+                            {% if event.usage_type == 'once' %}
                                 <span class="badge bg-primary">單次</span>
                             {% else %}
                                 <span class="badge bg-success">每週</span>
                             {% endif %}
                         </td>
                         <td>
-                            {{record.start_date|date:"Y/m/d"}}~{{record.end_date|date:"Y/m/d"}}
+                            {{event.start_date|date:"Y/m/d"}}~{{event.end_date|date:"Y/m/d"}}
                         </td>
                         <td>
-                            {{ record.get_periods_display }}~{{ record.get_periods_end_display }}
+                            {{ event.get_periods_display }}~{{ event.get_periods_end_display }}
                         </td>
                         <td>
-                            {% if record.exclude_weeks %}
-                            {{ record.exclude_weeks }}
+                            {% if event.exclude_weeks %}
+                            {{ event.exclude_weeks }}
                             {% else %}
                                 ---
                             {% endif %}
                         </td>
-                        <td>{{ record.location }}</td>
-                        <td>{{ record.get_device_type_display }}</td>
-                        <td>{{ record.device_amount }} 台</td>
+                        <td>{{ event.location }}</td>
+                        <td>{{ event.get_device_type_display }}</td>
+                        <td>{{ event.device_amount }} 台</td>
                         <td>
-                            {% if record.status == '待審核' %}
+                            {% if event.status == '待審核' %}
                                 <span class="text-muted">待審核</span>
-                            {% elif record.status == '已核准' %}
+                            {% elif event.status == '已核准' %}
                                 <span class="badge badge-approved">已核准</span>
-                            {% elif record.status == '已拒絕' %}
+                            {% elif event.status == '已拒絕' %}
                                 <span class="badge badge-rejected">已拒絕</span>
                             {% endif %}
                         </td>

@@ -117,7 +117,19 @@ def logout_view(request):
 
 
 def all_reservation_list(request):
-    borrow_records = Borrowlist.objects.all().order_by('-id')
-    return render(request, 'all_reservation.html', {
-        'borrow_records': borrow_records
-    })
+    date_query = request.GET.get('selected_date')
+    
+    # 2. 預設撈出所有資料
+    events = Borrowlist.objects.all()
+    
+    # 3. 判斷邏輯：如果使用者有選擇日期，且該值不為空字串，則進行篩選
+    if date_query:
+        events = events.filter(start_date= date_query )
+        
+    # 4. 把資料以及使用者剛剛選的日期傳回前端（讓前端可以記住選了什麼）
+    context = {
+        'events': events,
+        'date_query': date_query, # 傳回去讓網頁的 input 欄位保留剛剛選的日期
+    }
+
+    return render(request, 'all_reservation.html',context)
