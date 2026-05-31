@@ -20,15 +20,36 @@ def reservation_create(request):
         if form.is_valid():
             try:
                 with transaction.atomic():
-
                     reservation = form.save(commit=False)
-                    
-
                     reservation.user = request.POST.get('user')
                     reservation.exclude_weeks = request.POST.get('exclude_weeks', '')
+                    
+                    # 🌟 既然能通過 form 驗證，代表一定有空車。
+                    # 🌟 我們在這裡用一模一樣的邏輯，找出那台空車塞給它！
+                    req_date = form.cleaned_data.get('start_date')
+                    req_period = form.cleaned_data.get('periods')
+                    device_type = form.cleaned_data.get('device_type')
+                    
+                    # 只找符合該種類的車
+                    all_vehicles = devicecar.objects.filter(device_type=device_type)
+                    
+                    for vehicle in all_vehicles:
+                        is_occupied = Borrowlist.objects.filter(
+                            start_date=req_date,
+                            periods=req_period,
+                            assigned_vehicle=vehicle
+                        ).exclude(status='已拒絕').exists()
+                        
+                        if not is_occupied:
+                            reservation.assigned_vehicle = vehicle  # 找到它，指派過去！
+                            break
+                    
+                    # 真正儲存到資料庫
                     reservation.save()
+                    
                     messages.success(request, "🎉 您的借用申請已成功送出！請等待管理員審核。")
                     return redirect('allreservation_view')
+                    
             except Exception as e:
                 print("存檔時發生資料庫錯誤：", e)
         else:
@@ -36,12 +57,13 @@ def reservation_create(request):
             
     device_form = form
     time_form = form
-
+    
     return render(request, 'forms.html', {
         'form': form,
         'device_form': device_form,
         'time_form': time_form,
     })
+
 
 def view_borrow_list(request):
     """
@@ -133,3 +155,4 @@ def all_reservation_list(request):
     }
 
     return render(request, 'all_reservation.html',context)
+

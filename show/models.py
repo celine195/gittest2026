@@ -81,6 +81,14 @@ class Borrowlist(models.Model):
     device_amount = models.PositiveIntegerField(default=1)
     classroom = models.CharField(max_length=10, blank=True, null=True)
 
+    assigned_vehicle = models.ForeignKey(
+        'devicecar', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        verbose_name="系統指派載具車"
+    )
+
 
 class devicecar(models.Model):
     device_id = models.CharField(
@@ -103,4 +111,5 @@ class reservationlist(models.Model):
     devicecar_id = models.IntegerField()
     class Meta: 
         db_table = 'show_reservationlist'
+
 

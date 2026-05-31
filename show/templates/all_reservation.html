@@ -81,6 +81,7 @@
                         <th>使用教室</th>
                         <th>載具種類</th>
                         <th>申請數量</th>
+                        <th>分配到的載具車</th>
                         <th>審核狀態</th>
                     </tr>
                 </thead>
@@ -112,6 +113,7 @@
                         <td>{{ event.location }}</td>
                         <td>{{ event.get_device_type_display }}</td>
                         <td>{{ event.device_amount }} 台</td>
+                        <td>{{ event.assigned_vehicle.device_id }}</td>
                         <td>
                             {% if event.status == '待審核' %}
                                 <span class="text-muted">待審核</span>

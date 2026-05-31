@@ -68,6 +68,7 @@
                     <th>使用教室</th>
                     <th>載具種類</th>
                     <th>申請數量</th>
+                    <th>分配到的載具車</th>
                     <th>審核狀態</th>
                 </tr>
             </thead>
@@ -117,6 +118,8 @@
                     <td>{{ record.get_device_type_display }}</td>
 
                     <td>{{ record.device_amount }} 台</td>
+                    
+                    <td>{{ record.assigned_vehicle.device_id }}</td>
 
                     <td>
 
