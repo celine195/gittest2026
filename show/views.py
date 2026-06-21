@@ -24,13 +24,11 @@ def reservation_create(request):
                     reservation.user = request.POST.get('user')
                     reservation.exclude_weeks = request.POST.get('exclude_weeks', '')
                     
-                    # 🌟 既然能通過 form 驗證，代表一定有空車。
-                    # 🌟 我們在這裡用一模一樣的邏輯，找出那台空車塞給它！
                     req_date = form.cleaned_data.get('start_date')
                     req_period = form.cleaned_data.get('periods')
                     device_type = form.cleaned_data.get('device_type')
                     
-                    # 只找符合該種類的車
+    
                     all_vehicles = devicecar.objects.filter(device_type=device_type)
                     
                     for vehicle in all_vehicles:
@@ -41,10 +39,9 @@ def reservation_create(request):
                         ).exclude(status='已拒絕').exists()
                         
                         if not is_occupied:
-                            reservation.assigned_vehicle = vehicle  # 找到它，指派過去！
+                            reservation.assigned_vehicle = vehicle
                             break
-                    
-                    # 真正儲存到資料庫
+        
                     reservation.save()
                     
                     messages.success(request, "🎉 您的借用申請已成功送出！請等待管理員審核。")
@@ -141,17 +138,16 @@ def logout_view(request):
 def all_reservation_list(request):
     date_query = request.GET.get('selected_date')
     
-    # 2. 預設撈出所有資料
     events = Borrowlist.objects.all()
     
-    # 3. 判斷邏輯：如果使用者有選擇日期，且該值不為空字串，則進行篩選
+  
     if date_query:
         events = events.filter(start_date= date_query )
         
-    # 4. 把資料以及使用者剛剛選的日期傳回前端（讓前端可以記住選了什麼）
+
     context = {
         'events': events,
-        'date_query': date_query, # 傳回去讓網頁的 input 欄位保留剛剛選的日期
+        'date_query': date_query, 
     }
 
     return render(request, 'all_reservation.html',context)
